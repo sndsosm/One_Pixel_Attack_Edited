@@ -193,11 +193,11 @@ def evaluate_models(models, x_test, y_test):
 
 import os.path
 
-def load_results():
-    if os.path.exists(networks/results/untargeted_results.pkl):
+def load_results(targeted):
+    if (targeted==False):
         with open('networks/results/untargeted_results.pkl', 'rb') as file:
             result = pickle.load(file)
-    if os.path.exists(networks/results/targeted_results.pkl):
+    else:
         with open('networks/results/targeted_results.pkl', 'rb') as file:
             result = pickle.load(file)
     return result
