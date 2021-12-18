@@ -162,12 +162,14 @@ def visualize_attack(df, class_names):
 def attack_stats(df, models, network_stats):
     stats = []
     for model in models:
-      val_accuracy = np.array(network_stats[network_stats.name == model.name].accuracy)[0]
-      m_result = df[df.model == model.name]
-      pixels = list(set(m_result.pixels))
-      p_result = m_result[m_result.pixels]
-      success_rate = len(p_result[p_result.success])/len(p_result)
-      stats.append([model.name, val_accuracy, m_result.pixels, success_rate])
+        val_accuracy = np.array(network_stats[network_stats.name == model.name].accuracy)[0]
+        m_result = df[df.model == model.name]
+        pixels = list(set(m_result.pixels))
+
+        for pixel in pixels:
+            p_result = m_result[m_result.pixels == pixel]
+            success_rate = len(p_result[p_result.success]) / len(p_result)
+            stats.append([model.name, val_accuracy, pixel, success_rate])
 
     return pd.DataFrame(stats, columns=['model', 'accuracy', 'pixels', 'attack_success_rate'])
 
@@ -189,19 +191,22 @@ def evaluate_models(models, x_test, y_test):
         network_stats += [[model.name, accuracy, model.count_params()]]
     return network_stats, correct_imgs
 
+import os.path
 
 def load_results():
-    with open('networks/results/untargeted_results.pkl', 'rb') as file:
-        untargeted = pickle.load(file)
-    with open('networks/results/targeted_results.pkl', 'rb') as file:
-        targeted = pickle.load(file)
-    return untargeted, targeted
-
+    if os.path.exists(networks/results/untargeted_results.pkl):
+        with open('networks/results/untargeted_results.pkl', 'rb') as file:
+            result = pickle.load(file)
+    if os.path.exists(networks/results/targeted_results.pkl):
+        with open('networks/results/targeted_results.pkl', 'rb') as file:
+            result = pickle.load(file)
+    return result
 
 def checkpoint(results, targeted=False):
     filename = 'targeted' if targeted else 'untargeted'
 
     with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
+        file.truncate(0)
         pickle.dump(results, file)
 
 
