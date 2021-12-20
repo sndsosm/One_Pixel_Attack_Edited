@@ -46,7 +46,7 @@ class PixelAttacker:
       # This function should always be minimized, so return its complement if needed
       return predictions if minimize else 1 - predictions
     
-    def attack_success(self, x, img, target_class, model, targeted_attack=False, verbose=False):
+    def attack_success(self, x, img, target_class, model, targeted_attack, verbose):
         # Perturb the image with the given pixel(s) and get the prediction of the model
         attack_image = helper.perturb_image(x, img)
 
@@ -61,7 +61,7 @@ class PixelAttacker:
                 (not targeted_attack and predicted_class != target_class)):
             return True
             
-    def attack_successes(self,x,img, target_class, model, targeted_attack=False, verbose=False):
+    def attack_successes(self,x,img, target_class, model, targeted_attack, verbose):
       # Perturb the image with the given pixel(s) and get the prediction of the model
       attack_image = helper.perturb_pixels(x,img)
 
@@ -76,8 +76,8 @@ class PixelAttacker:
           (not targeted_attack and predicted_class != target_class)):
           return True
         
-    def attack(self, img_id, model, target=None, pixel_count=1,
-               method='DE',maxiter=250, popsize=500,tempertature=5230, T=1.0, verbose=False, plot=False):
+    def attack(self, img_id, model, target, pixel_count,
+               method,maxiter, popsize,tempertature, T, verbose):
         # Change the target class based on whether this is a targeted attack or not
         print("Exectuting original attack")
         targeted_attack = target is not None
@@ -118,14 +118,12 @@ class PixelAttacker:
         cdiff = prior_probs[actual_class] - predicted_probs[actual_class]
 
         # Show the best attempt at a solution (successful or not)
-        if plot:
-            helper.plot_image(attack_image, actual_class, self.class_names, predicted_class)
-
+        
         return [model.name, pixel_count, img_id, actual_class, predicted_class, success, cdiff, prior_probs,
                 predicted_probs, attack_result.x, attack_image]
     
-    def new_attack(img_id, model, target=None, pixel_count=1, method='DE', 
-           maxiter=250, popsize=500,tempertature=5230, T=1.0, verbose=False):
+    def new_attack(self, img_id, model, target, pixel_count, method, 
+           maxiter, popsize,tempertature, T, verbose):
       # Change the target class based on whether this is a targeted attack or not
       print("Executing new attack")
       targeted_attack = target is not None
@@ -167,8 +165,8 @@ class PixelAttacker:
 
       return [model.name, pixel_count, img_id, actual_class, predicted_class, success, cdiff, prior_probs, predicted_probs, attack_result.x,attack_image]
     
-    def attack_all(self, models, samples=500, pixels=(1, 3, 5),method='DE',temperature=5230,T=1.0, targeted=False,
-                   maxiter=75, popsize=400, verbose=False):
+    def attack_all(self, models, samples, pixels,method,temperature,T, targeted,
+                   maxiter, popsize, verbose):
         results = []
         for model in models:
             model_results = []
@@ -185,7 +183,7 @@ class PixelAttacker:
                             print('Attacking with target', self.class_names[target])
                             if target == self.y_test[img, 0]:
                                 continue
-                        result = self.attack(img, model, target, pixel_count,method=method[0],
+                        result = self.attack(img, model, target, pixel_count,method=method,
                                              maxiter=maxiter, temperature=temperature,T=T, popsize=popsize, 
                                              verbose=verbose)
                         model_results.append(result)
@@ -194,24 +192,24 @@ class PixelAttacker:
             helper.checkpoint(results, targeted)
         return results
         
-    def new_attack_all(self, models, samples=500, pixels=(1),method='DE',temperature=5230,T=1.0, targeted=False, 
-               maxiter=1250, popsize=550, verbose=False):
+    def new_attack_all(self, models, samples, pixels,method,temperature,T, targeted, 
+               maxiter, popsize, verbose):
       results = []
       for model in models:
           model_results = []
           valid_imgs = self.correct_imgs[self.correct_imgs.name == model.name].img
           img_samples = np.random.choice(valid_imgs, samples, replace=False)
-
+      
           for i, img_id in enumerate(img_samples):
                   print('\n', model.name, '- image', img_id, '-', i+1, '/', len(img_samples))
                   targets = [None] if not targeted else range(10)
-
                   for target in targets:
                       if targeted:
                           print('Attacking with target', self.class_names[target])
                           if target == self.y_test[img_id, 0]:
                               continue
-                      result = self.new_attack(img_id, model, target, pixels, method=method[0],
+                      
+                      result = self.new_attack(img_id, model, target, pixels, method=method,
                                       maxiter=maxiter,temperature=temperature,T=T, popsize=popsize, 
                                       verbose=verbose)
                       model_results.append(result)
@@ -235,7 +233,7 @@ def predict_attack(self, base, models, df):
             imgs=np.asarray(img)
             labels=np.array(p_result.true).reshape(len(p_result.true),1)
             for model in models:
-                    val_accuracy = np.array(network_stats[network_stats.name == model.name].accuracy)[0]
+                    val_accuracy = np.array(self.network_stats[self.network_stats.name == model.name].accuracy)[0]
                     net_stats,_ =helper.evaluate_models([model],imgs,labels)
                     new_stats.append([base_name,model.name, val_accuracy, pixel,s, net_stats[0][1]])
           
@@ -253,7 +251,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Attack models on Cifar10')
     parser.add_argument('--model', nargs='+', choices=model_defs.keys(), default='resnet',
                         help='Specify one model by name to evaluate.')
-    parser.add_argument('--method', nargs='+', default='DE',
+    parser.add_argument('--method',  type=str,default='DE',
                         help='Specify optimization algorithm.')
     parser.add_argument('--pixels', nargs='+', default=(1), type=int,
                         help='The number of pixels that can be perturbed.')
