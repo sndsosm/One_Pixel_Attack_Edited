@@ -79,7 +79,7 @@ class PixelAttacker:
     def attack(self, img_id, model, target, pixel_count,
                method,maxiter, temperature, T,popsize, verbose):
         # Change the target class based on whether this is a targeted attack or not
-        print("Exectuting original attack")
+        
         targeted_attack = target is not None
         target_class = target if targeted_attack else self.y_test[img_id, 0]
 
@@ -125,7 +125,7 @@ class PixelAttacker:
     def new_attack(self, img_id, model, target, pixel_count, method, 
            maxiter, temperature, T,popsize, verbose):
       # Change the target class based on whether this is a targeted attack or not
-      print("Executing new attack")
+      
       targeted_attack = target is not None
       target_class = target if targeted_attack else self.y_test[img_id, 0]
       dim_x, dim_y = self.dimensions
@@ -168,6 +168,7 @@ class PixelAttacker:
     def attack_all(self, models, samples, pixels,method,temperature,T, targeted,
                    maxiter, popsize, verbose):
         results = []
+        print("Exectuting original attack")
         for model in models:
             model_results = []
             valid_imgs = self.correct_imgs[self.correct_imgs.name == model.name].img
@@ -195,6 +196,7 @@ class PixelAttacker:
     def new_attack_all(self, models, samples, pixels,method,temperature,T, targeted, 
                maxiter, popsize, verbose):
       results = []
+      print("Executing new attack")
       for model in models:
           model_results = []
           valid_imgs = self.correct_imgs[self.correct_imgs.name == model.name].img
