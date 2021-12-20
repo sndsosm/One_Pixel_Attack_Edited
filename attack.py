@@ -231,7 +231,6 @@ class PixelAttacker:
       base_name=base[0].name
       df2=helper.attack_stats(df, base, self.network_stats)
       s=float(df2.attack_success_rate)
-      method=df2.method
       m_result = df[df.model == base_name]
       pixels = list(set(m_result.pixels))
       for pixel in pixels:
@@ -244,9 +243,9 @@ class PixelAttacker:
                 for model in models:
                         val_accuracy = np.array(self.network_stats[self.network_stats.name == model.name].accuracy)[0]
                         net_stats,_ =helper.evaluate_models([model],imgs,labels)
-                        new_stats.append([base_name,model.name, val_accuracy, pixel,method,s, net_stats[0][1]])
+                        new_stats.append([base_name,model.name, val_accuracy, pixel,s, net_stats[0][1]])
               
-      return pd.DataFrame(new_stats, columns=['attack_model', 'evaluation_model', 'accuracy', 'pixels','method', 'attack_success_rate','after_attack_accuracy'])
+      return pd.DataFrame(new_stats, columns=['attack_model', 'evaluation_model', 'accuracy', 'pixels', 'attack_success_rate','after_attack_accuracy'])
 
 
 if __name__ == '__main__':
