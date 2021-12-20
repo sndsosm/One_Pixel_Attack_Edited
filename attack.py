@@ -18,6 +18,8 @@ from networks.capsnet import CapsNet
 from differential_evolution import differential_evolution
 import helper
 from scipy.optimize import dual_annealing, basinhopping
+import random
+from random import randint 
 
 class PixelAttacker:
     def __init__(self, base, models, data, class_names, dimensions=(32, 32)):
@@ -185,8 +187,8 @@ class PixelAttacker:
                             print('Attacking with target', self.class_names[target])
                             if target == self.y_test[img, 0]:
                                 continue
-                        result = self.attack(img, model, target, pixel_count,
-                                             maxiter=maxiter, popsize=popsize,
+                        result = self.attack(img, model, target, pixel_count,method=method,
+                                             maxiter=maxiter, temperature,temperature,T=T, popsize=popsize, 
                                              verbose=verbose)
                         model_results.append(result)
 
@@ -211,8 +213,8 @@ class PixelAttacker:
                           print('Attacking with target', selfclass_names[target])
                           if target == y_test[img_id, 0]:
                               continue
-                      result = self.new_attack(img_id, model, target, pixels, 
-                                      maxiter=maxiter,method=method,temperature,temperature,T=T, popsize=popsize, 
+                      result = self.new_attack(img_id, model, target, pixels, method=method,
+                                      maxiter=maxiter,temperature,temperature,T=T, popsize=popsize, 
                                       verbose=verbose)
                       model_results.append(result)
 
