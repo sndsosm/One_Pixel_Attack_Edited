@@ -286,7 +286,7 @@ if __name__ == '__main__':
 
     print('Starting attack')
     if (attack_type=='old'):
-      results = attacker.attack_all(base, samples=args.samples, pixels=args.pixels, targeted=args.targeted,
+      results = attacker.attack_all(base, samples=args.samples, pixels=args.pixels, method=args.method,temperature=args.temperature,T=args.T, targeted=args.targeted,
                                     maxiter=args.maxiter, popsize=args.popsize, verbose=args.verbose)
     elif(attack_type=='new'):
       results = attacker.new_attack_all(base, samples=args.samples, pixels=args.pixels, method=args.method,temperature=args.temperature,T=args.T, targeted=args.targeted,
