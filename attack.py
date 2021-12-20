@@ -145,7 +145,7 @@ class PixelAttacker:
         attack_result = differential_evolution(predict_fn, bounds, maxiter=maxiter, popsize=popmul,recombination=1, atol=-1, polish=False)
       elif (method=='DA'):
           bounds = [(0,dim_x), (0,dim_y),(0,256), (0,dim_x), (0,dim_y),(0,256),(0,dim_x), (0,dim_y),(0,256)] * pixel_count
-          attack_result =dual_annealing(predict_fn, bounds, maxiter=maxiter, intital_temp=temperature)
+          attack_result =dual_annealing(predict_fn, bounds, maxiter=maxiter, initial_temp=temperature)
       elif (method=='BH'):
         bounds = [(0,dim_x), (0,dim_y),(0,255), (0,dim_x), (0,dim_y),(0,255),(0,dim_x), (0,dim_y),(0,255)] * pixel_count
         minimizer_kwargs = { "method": "L-BFGS-B","bounds":bounds }
@@ -177,7 +177,7 @@ class PixelAttacker:
                 for i, img in enumerate(img_samples):
                     print(model.name, '- image', img, '-', i + 1, '/', len(img_samples))
                     targets = [None] if not targeted else range(10)
-
+               
                     for target in targets:
                         if targeted:
                             print('Attacking with target', self.class_names[target])
@@ -199,20 +199,20 @@ class PixelAttacker:
           model_results = []
           valid_imgs = self.correct_imgs[self.correct_imgs.name == model.name].img
           img_samples = np.random.choice(valid_imgs, samples, replace=False)
-      
-          for i, img_id in enumerate(img_samples):
-                  print('\n', model.name, '- image', img_id, '-', i+1, '/', len(img_samples))
-                  targets = [None] if not targeted else range(10)
-                  for target in targets:
-                      if targeted:
-                          print('Attacking with target', self.class_names[target])
-                          if target == self.y_test[img_id, 0]:
-                              continue
-                      
-                      result = self.new_attack(img_id, model, target, pixels, method=method,
-                                      maxiter=maxiter,temperature=temperature,T=T, popsize=popsize, 
-                                      verbose=verbose)
-                      model_results.append(result)
+          for pixel_count in pixels:
+            for i, img_id in enumerate(img_samples):
+                    print('\n', model.name, '- image', img_id, '-', i+1, '/', len(img_samples))
+                    targets = [None] if not targeted else range(10)
+                    for target in targets:
+                        if targeted:
+                            print('Attacking with target', self.class_names[target])
+                            if target == self.y_test[img_id, 0]:
+                                continue
+                        
+                        result = self.new_attack(img_id, model, target, pixel_count, method=method,
+                                        maxiter=maxiter,temperature=temperature,T=T, popsize=popsize, 
+                                        verbose=verbose)
+                        model_results.append(result)
 
           results += model_results
           helper.checkpoint(results, targeted)
