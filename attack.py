@@ -185,7 +185,7 @@ class PixelAttacker:
                             print('Attacking with target', self.class_names[target])
                             if target == self.y_test[img, 0]:
                                 continue
-                        result = self.attack(img, model, target, pixel_count,method=method,
+                        result = self.attack(img, model, target, pixel_count,method=method[0],
                                              maxiter=maxiter, temperature=temperature,T=T, popsize=popsize, 
                                              verbose=verbose)
                         model_results.append(result)
@@ -199,7 +199,7 @@ class PixelAttacker:
       results = []
       for model in models:
           model_results = []
-          valid_imgs = correct_imgs[self.correct_imgs.name == model.name].img
+          valid_imgs = self.correct_imgs[self.correct_imgs.name == model.name].img
           img_samples = np.random.choice(valid_imgs, samples, replace=False)
 
           for i, img_id in enumerate(img_samples):
@@ -208,10 +208,10 @@ class PixelAttacker:
 
                   for target in targets:
                       if targeted:
-                          print('Attacking with target', selfclass_names[target])
-                          if target == y_test[img_id, 0]:
+                          print('Attacking with target', self.class_names[target])
+                          if target == self.y_test[img_id, 0]:
                               continue
-                      result = self.new_attack(img_id, model, target, pixels, method=method,
+                      result = self.new_attack(img_id, model, target, pixels, method=method[0],
                                       maxiter=maxiter,temperature=temperature,T=T, popsize=popsize, 
                                       verbose=verbose)
                       model_results.append(result)
@@ -257,8 +257,8 @@ if __name__ == '__main__':
                         help='Specify optimization algorithm.')
     parser.add_argument('--pixels', nargs='+', default=(1), type=int,
                         help='The number of pixels that can be perturbed.')
-    parser.add_argument('--attack', nargs='+', default='new',
-                        help='Specify oif you desire to conduct the old or new attack.')
+    parser.add_argument('--old',  action='store_true', 
+                        help='Set this switch if you desire to conduct the old or new attack.')
     parser.add_argument('--maxiter', default=75, type=int,
                         help='The maximum number of iterations in the differential evolution algorithm before giving up and failing the attack.')
     parser.add_argument('--temperature', default=5230, type=int,
@@ -279,7 +279,7 @@ if __name__ == '__main__':
     parent_dir = "./networks"
     path = os.path.join(parent_dir, directory)
 
-    if not os.path.isfile(path):
+    if not os.path.exists(path):
         os.mkdir(path)
         print("Directory '%s' created" %directory)
     else:
@@ -289,14 +289,16 @@ if __name__ == '__main__':
     class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
     base = [model_defs[m](load_weights=True) for m in args.model]
     models=[model_defs[m](load_weights=True) for m in model_defs.keys()]
-    attack_type=args.attack
+    
+    old=args.old
+
     attacker = PixelAttacker(base,models, test, class_names)
 
     print('Starting attack')
-    if (attack_type=='old'):
+    if (old):
       results = attacker.attack_all(base, samples=args.samples, pixels=args.pixels, method=args.method,temperature=args.temperature,T=args.T, targeted=args.targeted,
                                     maxiter=args.maxiter, popsize=args.popsize, verbose=args.verbose)
-    elif(attack_type=='new'):
+    else:
       results = attacker.new_attack_all(base, samples=args.samples, pixels=args.pixels, method=args.method,temperature=args.temperature,T=args.T, targeted=args.targeted,
                                     maxiter=args.maxiter, popsize=args.popsize, verbose=args.verbose)
     columns = ['model', 'pixels', 'image', 'true', 'predicted', 'success', 'cdiff', 'prior_probs', 'predicted_probs',
