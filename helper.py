@@ -35,6 +35,31 @@ def perturb_image(xs, img):
 
     return imgs
 
+def perturb_pixels(xs, img):
+    # If this function is passed just one perturbation vector,
+    # pack it in a list to keep the computation the same
+    
+    if xs.ndim < 2:
+        xs = np.array([xs])
+    
+    # Copy the image n == len(xs) times so that we can 
+    # create n new perturbed images
+    tile = [len(xs)] + [1]*(xs.ndim+1)
+    imgs = np.tile(img, tile)
+    # Make sure to floor the members of xs as int types
+    xs = xs.astype(int)
+    
+    for x,img in zip(xs, imgs):
+        # Split x into an array of 5-tuples (perturbation pixels)
+        # i.e., [[x,y,r,g,b], ...]
+        pixels = np.split(x, len(x) // 9)
+        for pixel in pixels:
+            x_pos1, y_pos1, red, x_pos2, y_pos2, green, x_pos3, y_pos3, blue= pixel
+            img[x_pos1, y_pos1,0] = red
+            img[x_pos2, y_pos2,0] = blue
+            img[x_pos3, y_pos3,0] = green
+    
+    return imgs
 
 def plot_image(image, label_true=None, class_names=None, label_pred=None):
     if image.ndim == 4 and image.shape[0] == 1:
