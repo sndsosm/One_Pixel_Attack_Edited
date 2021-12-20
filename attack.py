@@ -188,7 +188,7 @@ class PixelAttacker:
                             if target == self.y_test[img, 0]:
                                 continue
                         result = self.attack(img, model, target, pixel_count,method=method,
-                                             maxiter=maxiter, temperature,temperature,T=T, popsize=popsize, 
+                                             maxiter=maxiter, temperature=temperature,T=T, popsize=popsize, 
                                              verbose=verbose)
                         model_results.append(result)
 
@@ -214,7 +214,7 @@ class PixelAttacker:
                           if target == y_test[img_id, 0]:
                               continue
                       result = self.new_attack(img_id, model, target, pixels, method=method,
-                                      maxiter=maxiter,temperature,temperature,T=T, popsize=popsize, 
+                                      maxiter=maxiter,temperature=temperature,T=T, popsize=popsize, 
                                       verbose=verbose)
                       model_results.append(result)
 
