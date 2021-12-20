@@ -77,31 +77,36 @@ class PixelAttacker:
           return True
         
     def attack(self, img_id, model, target=None, pixel_count=1,
-               maxiter=75, popsize=400, verbose=False, plot=False):
+               method='DE',maxiter=250, popsize=500,tempertature=5230, T=1.0, verbose=False, plot=False):
         # Change the target class based on whether this is a targeted attack or not
+        print("Exectuting original attack")
         targeted_attack = target is not None
         target_class = target if targeted_attack else self.y_test[img_id, 0]
 
         # Define bounds for a flat vector of x,y,r,g,b values
         # For more pixels, repeat this layout
         dim_x, dim_y = self.dimensions
-        bounds = [(0, dim_x), (0, dim_y), (0, 256), (0, 256), (0, 256)] * pixel_count
-
-        # Population multiplier, in terms of the size of the perturbation vector x
-        popmul = max(1, popsize // len(bounds))
-
-        # Format the predict/callback functions for the differential evolution algorithm
+                
         def predict_fn(xs):
             return self.predict_classes(xs, self.x_test[img_id], target_class, model, target is None)
 
         def callback_fn(x, convergence):
             return self.attack_success(x, self.x_test[img_id], target_class, model, targeted_attack, verbose)
 
-        # Call Scipy's Implementation of Differential Evolution
-        attack_result = differential_evolution(
-            predict_fn, bounds, maxiter=maxiter, popsize=popmul,
-            recombination=1, atol=-1, callback=callback_fn, polish=False)
-
+        if (method=='DE'):
+        bounds = [(0, dim_x), (0, dim_y), (0, 256), (0, 256), (0, 256)] * pixel_count
+        # Population multiplier, in terms of the size of the perturbation vector x
+        popmul = max(1, popsize // len(bounds))
+        attack_result = differential_evolution(predict_fn, bounds, maxiter=maxiter, popsize=popmul,recombination=1,callback=callback_fn, atol=-1, polish=False)
+        elif (method=='DA'):
+              bounds = bounds = [(0, dim_x), (0, dim_y), (0, 256), (0, 256), (0, 256)] * pixel_count
+              attack_result =dual_annealing(predict_fn, bounds, maxiter=maxiter, intital_temp=temperature)
+        elif (method=='BH'):
+            bounds = [(0, dim_x), (0, dim_y), (0, 255), (0, 255), (0, 255)] * pixel_count
+            minimizer_kwargs = { "method": "L-BFGS-B","bounds":bounds }
+            init=[randint(0,dim_x),randint(0,dim_y),randint(0,255),randint(0,255),randint(0,255)]*pixel_count
+            attack_result = basinhopping(predict_fn,init,niter=maxiter,T=T)
+        
         # Calculate some useful statistics to return from this function
         attack_image = helper.perturb_image(attack_result.x, self.x_test[img_id])[0]
         prior_probs = model.predict(np.array([self.x_test[img_id]]))[0]
@@ -121,6 +126,7 @@ class PixelAttacker:
     def new_attack(img_id, model, target=None, pixel_count=1, method='DE', 
            maxiter=250, popsize=500,tempertature=5230, T=1.0, verbose=False):
       # Change the target class based on whether this is a targeted attack or not
+      print("Executing new attack")
       targeted_attack = target is not None
       target_class = target if targeted_attack else self.y_test[img_id, 0]
       dim_x, dim_y = self.dimensions
@@ -141,7 +147,7 @@ class PixelAttacker:
       elif (method=='DA'):
           bounds = [(0,dim_x), (0,dim_y),(0,256), (0,dim_x), (0,dim_y),(0,256),(0,dim_x), (0,dim_y),(0,256)] * pixel_count
           attack_result =dual_annealing(predict_fn, bounds, maxiter=maxiter, intital_temp=temperature)
-      elif (moethd=='BH'):
+      elif (method=='BH'):
         bounds = [(0,dim_x), (0,dim_y),(0,255), (0,dim_x), (0,dim_y),(0,255),(0,dim_x), (0,dim_y),(0,255)] * pixel_count
         minimizer_kwargs = { "method": "L-BFGS-B","bounds":bounds }
         init=[randint(0,dim_x),randint(0,dim_y),randint(0,255),randint(0,dim_x),randint(0,dim_y),randint(0,255),randint(0,dim_x),randint(0,dim_y),randint(0,255)]*pixel_count
