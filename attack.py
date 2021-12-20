@@ -220,26 +220,26 @@ class PixelAttacker:
           helper.checkpoint(results, targeted)
       return results
 
-def predict_attack(self, base, models, df):
-  new_stats=[]
-  base_name=base[0].name
-  df2=helper.attack_stats(df, base, self.network_stats)
-  s=float(df2.attack_success_rate)
-  m_result = df[df.model == base_name]
-  pixels = list(set(m_result.pixels))
-  for pixel in pixels:
-            p_result = m_result[m_result.pixels == pixel]
-            img=[]
-            for x in p_result.perturbed:
-              img.append(x)
-            imgs=np.asarray(img)
-            labels=np.array(p_result.true).reshape(len(p_result.true),1)
-            for model in models:
-                    val_accuracy = np.array(self.network_stats[self.network_stats.name == model.name].accuracy)[0]
-                    net_stats,_ =helper.evaluate_models([model],imgs,labels)
-                    new_stats.append([base_name,model.name, val_accuracy, pixel,s, net_stats[0][1]])
-          
-  return pd.DataFrame(new_stats, columns=['attack_model', 'evaluation_model', 'accuracy', 'pixels', 'attack_success_rate','after_attack_accuracy'])
+    def predict_attack(self, base, models, df):
+      new_stats=[]
+      base_name=base[0].name
+      df2=helper.attack_stats(df, base, self.network_stats)
+      s=float(df2.attack_success_rate)
+      m_result = df[df.model == base_name]
+      pixels = list(set(m_result.pixels))
+      for pixel in pixels:
+                p_result = m_result[m_result.pixels == pixel]
+                img=[]
+                for x in p_result.perturbed:
+                  img.append(x)
+                imgs=np.asarray(img)
+                labels=np.array(p_result.true).reshape(len(p_result.true),1)
+                for model in models:
+                        val_accuracy = np.array(self.network_stats[self.network_stats.name == model.name].accuracy)[0]
+                        net_stats,_ =helper.evaluate_models([model],imgs,labels)
+                        new_stats.append([base_name,model.name, val_accuracy, pixel,s, net_stats[0][1]])
+              
+      return pd.DataFrame(new_stats, columns=['attack_model', 'evaluation_model', 'accuracy', 'pixels', 'attack_success_rate','after_attack_accuracy'])
 
 
 if __name__ == '__main__':
