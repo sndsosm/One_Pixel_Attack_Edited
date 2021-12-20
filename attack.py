@@ -94,14 +94,17 @@ class PixelAttacker:
             return self.attack_success(x, self.x_test[img_id], target_class, model, targeted_attack, verbose)
 
         if (method=='DE'):
+          alg='DE'
           bounds = [(0, dim_x), (0, dim_y), (0, 256), (0, 256), (0, 256)] * pixel_count
           # Population multiplier, in terms of the size of the perturbation vector x
           popmul = max(1, popsize // len(bounds))
           attack_result = differential_evolution(predict_fn, bounds, maxiter=maxiter, popsize=popmul,recombination=1,callback=callback_fn, atol=-1, polish=False)
         elif (method=='DA'):
+          alg='DA'
           bounds = bounds = [(0, dim_x), (0, dim_y), (0, 256), (0, 256), (0, 256)] * pixel_count
           attack_result =dual_annealing(predict_fn, bounds, maxiter=maxiter, intital_temp=temperature)
         elif (method=='BH'):
+          alg='BH'
           bounds = [(0, dim_x), (0, dim_y), (0, 255), (0, 255), (0, 255)] * pixel_count
           minimizer_kwargs = { "method": "L-BFGS-B","bounds":bounds }
           init=[randint(0,dim_x),randint(0,dim_y),randint(0,255),randint(0,255),randint(0,255)]*pixel_count
@@ -119,7 +122,7 @@ class PixelAttacker:
 
         # Show the best attempt at a solution (successful or not)
         
-        return [model.name, pixel_count,method, img_id, actual_class, predicted_class, success, cdiff, prior_probs,
+        return [model.name, pixel_count,alg, img_id, actual_class, predicted_class, success, cdiff, prior_probs,
                 predicted_probs, attack_result.x, attack_image]
     
     def new_attack(self, img_id, model, target, pixel_count, method, 
@@ -139,14 +142,17 @@ class PixelAttacker:
                                 model, targeted_attack, verbose)
                                 
       if (method=='DE'):
+        alg='DE'
         bounds = [(0,dim_x), (0,dim_y),(0,256), (0,dim_x), (0,dim_y),(0,256),(0,dim_x), (0,dim_y),(0,256)] * pixel_count
         # Population multiplier, in terms of the size of the perturbation vector x
         popmul = max(1, popsize // len(bounds))
         attack_result = differential_evolution(predict_fn, bounds, maxiter=maxiter, popsize=popmul,recombination=1, atol=-1, polish=False)
       elif (method=='DA'):
+          alg='DA'
           bounds = [(0,dim_x), (0,dim_y),(0,256), (0,dim_x), (0,dim_y),(0,256),(0,dim_x), (0,dim_y),(0,256)] * pixel_count
           attack_result =dual_annealing(predict_fn, bounds, maxiter=maxiter, initial_temp=temperature)
       elif (method=='BH'):
+        alg='BH'
         bounds = [(0,dim_x), (0,dim_y),(0,255), (0,dim_x), (0,dim_y),(0,255),(0,dim_x), (0,dim_y),(0,255)] * pixel_count
         minimizer_kwargs = { "method": "L-BFGS-B","bounds":bounds }
         init=[randint(0,dim_x),randint(0,dim_y),randint(0,255),randint(0,dim_x),randint(0,dim_y),randint(0,255),randint(0,dim_x),randint(0,dim_y),randint(0,255)]*pixel_count
@@ -163,7 +169,7 @@ class PixelAttacker:
       # Show the best attempt at a solution (successful or not)
       #helper.plot_image(attack_image, actual_class, class_names, predicted_class)
 
-      return [model.name, pixel_count,method, img_id, actual_class, predicted_class, success, cdiff, prior_probs, predicted_probs, attack_result.x,attack_image]
+      return [model.name, pixel_count,alg, img_id, actual_class, predicted_class, success, cdiff, prior_probs, predicted_probs, attack_result.x,attack_image]
     
     def attack_all(self, models, samples, pixels,method,temperature,T, targeted,
                    maxiter, popsize, verbose):
