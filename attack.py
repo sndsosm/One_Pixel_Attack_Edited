@@ -10,9 +10,7 @@ from networks.lenet import LeNet
 from networks.pure_cnn import PureCnn
 from networks.network_in_network import NetworkInNetwork
 from networks.resnet import ResNet
-from networks.densenet import DenseNet
-from networks.wide_resnet import WideResNet
-from networks.capsnet import CapsNet
+
 
 # Helper functions
 from differential_evolution import differential_evolution
