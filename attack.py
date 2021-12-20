@@ -11,7 +11,7 @@ from networks.pure_cnn import PureCnn
 from networks.network_in_network import NetworkInNetwork
 from networks.resnet import ResNet
 
-
+import os
 # Helper functions
 from differential_evolution import differential_evolution
 import helper
@@ -275,7 +275,13 @@ if __name__ == '__main__':
     parser.add_argument('--verbose', action='store_true', help='Print out additional information every iteration.')
 
     args = parser.parse_args()
+    directory = "results"
+    parent_dir = "./networks"
+    path = os.path.join(parent_dir, directory)
 
+    if not os.path.isfile(path):
+        os.mkdir(path)
+        print("Directory '%s' created" %directory)
     # Load data and model
     _, test = cifar10.load_data()
     class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
