@@ -77,7 +77,7 @@ class PixelAttacker:
           return True
         
     def attack(self, img_id, model, target, pixel_count,
-               method,maxiter, popsize,tempertature, T, verbose):
+               method,maxiter, tempertature, T,popsize, verbose):
         # Change the target class based on whether this is a targeted attack or not
         print("Exectuting original attack")
         targeted_attack = target is not None
@@ -123,7 +123,7 @@ class PixelAttacker:
                 predicted_probs, attack_result.x, attack_image]
     
     def new_attack(self, img_id, model, target, pixel_count, method, 
-           maxiter, popsize,tempertature, T, verbose):
+           maxiter, tempertature, T,popsize, verbose):
       # Change the target class based on whether this is a targeted attack or not
       print("Executing new attack")
       targeted_attack = target is not None
