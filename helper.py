@@ -189,12 +189,11 @@ def attack_stats(df, models, network_stats):
     for model in models:
         val_accuracy = np.array(network_stats[network_stats.name == model.name].accuracy)[0]
         m_result = df[df.model == model.name]
-        
+        method=np.array(df[df.model=model.name].method)[0]
         pixels = list(set(m_result.pixels))
         
         for pixel in pixels:
-            method=  df[df.method]
-            print(str(df[df.method]))
+            
             p_result = m_result[m_result.pixels == pixel]
             success_rate = len(p_result[p_result.success]) / len(p_result)
             stats.append([model.name, val_accuracy, pixel,method, success_rate])
