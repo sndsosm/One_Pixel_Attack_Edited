@@ -167,7 +167,7 @@ class PixelAttacker:
 
       return [model.name, pixel_count, img_id, actual_class, predicted_class, success, cdiff, prior_probs, predicted_probs, attack_result.x,attack_image]
     
-    def attack_all(self, models, samples=500, pixels=(1, 3, 5), targeted=False,
+    def attack_all(self, models, samples=500, pixels=(1, 3, 5),method='DE',temperature=5230,T=1.0, targeted=False,
                    maxiter=75, popsize=400, verbose=False):
         results = []
         for model in models:
@@ -194,7 +194,7 @@ class PixelAttacker:
             helper.checkpoint(results, targeted)
         return results
         
-    def new_attack_all(self, models, samples=500, pixels=(1),method=method,temperature=temperature,T=T, targeted=False, 
+    def new_attack_all(self, models, samples=500, pixels=(1),method='DE',temperature=5230,T=1.0, targeted=False, 
                maxiter=1250, popsize=550, verbose=False):
       results = []
       for model in models:
