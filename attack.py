@@ -119,7 +119,7 @@ class PixelAttacker:
 
         # Show the best attempt at a solution (successful or not)
         
-        return [model.name, pixel_count, img_id, actual_class, predicted_class, success, cdiff, prior_probs,
+        return [model.name, pixel_count,method, img_id, actual_class, predicted_class, success, cdiff, prior_probs,
                 predicted_probs, attack_result.x, attack_image]
     
     def new_attack(self, img_id, model, target, pixel_count, method, 
@@ -163,7 +163,7 @@ class PixelAttacker:
       # Show the best attempt at a solution (successful or not)
       #helper.plot_image(attack_image, actual_class, class_names, predicted_class)
 
-      return [model.name, pixel_count, img_id, actual_class, predicted_class, success, cdiff, prior_probs, predicted_probs, attack_result.x,attack_image]
+      return [model.name, pixel_count,method, img_id, actual_class, predicted_class, success, cdiff, prior_probs, predicted_probs, attack_result.x,attack_image]
     
     def attack_all(self, models, samples, pixels,method,temperature,T, targeted,
                    maxiter, popsize, verbose):
@@ -225,6 +225,7 @@ class PixelAttacker:
       base_name=base[0].name
       df2=helper.attack_stats(df, base, self.network_stats)
       s=float(df2.attack_success_rate)
+      method=df2.method
       m_result = df[df.model == base_name]
       pixels = list(set(m_result.pixels))
       for pixel in pixels:
@@ -237,9 +238,9 @@ class PixelAttacker:
                 for model in models:
                         val_accuracy = np.array(self.network_stats[self.network_stats.name == model.name].accuracy)[0]
                         net_stats,_ =helper.evaluate_models([model],imgs,labels)
-                        new_stats.append([base_name,model.name, val_accuracy, pixel,s, net_stats[0][1]])
+                        new_stats.append([base_name,model.name, val_accuracy, pixel,method,s, net_stats[0][1]])
               
-      return pd.DataFrame(new_stats, columns=['attack_model', 'evaluation_model', 'accuracy', 'pixels', 'attack_success_rate','after_attack_accuracy'])
+      return pd.DataFrame(new_stats, columns=['attack_model', 'evaluation_model', 'accuracy', 'pixels','method', 'attack_success_rate','after_attack_accuracy'])
 
 
 if __name__ == '__main__':
@@ -301,17 +302,17 @@ if __name__ == '__main__':
     else:
       results = attacker.new_attack_all(base, samples=args.samples, pixels=args.pixels, method=args.method,temperature=args.temperature,T=args.T, targeted=args.targeted,
                                     maxiter=args.maxiter, popsize=args.popsize, verbose=args.verbose)
-    columns = ['model', 'pixels', 'image', 'true', 'predicted', 'success', 'cdiff', 'prior_probs', 'predicted_probs',
+    columns = ['model', 'pixels','method', 'image', 'true', 'predicted', 'success', 'cdiff', 'prior_probs', 'predicted_probs',
                'perturbation','perturbed']
     results_table = pd.DataFrame(results, columns=columns)
 
-    print(results_table[['model', 'pixels', 'image', 'true', 'predicted', 'success']])
+    print(results_table[['model', 'pixels', 'method', 'image', 'true', 'predicted', 'success']])
 
     print('Saving to', args.save)
     with open(args.save, 'wb') as file:
         pickle.dump(results, file)
     
-    attack_prediction=attacker.predict_attack(args.model,results_table)
+    attack_prediction=attacker.predict_attack(base,models,results_table)
     print(attack_prediction)
     
     print('Saving to', args.save_attack)
