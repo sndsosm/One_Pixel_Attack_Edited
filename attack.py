@@ -317,4 +317,4 @@ if __name__ == '__main__':
     
     print('Saving to', args.save_attack)
     with open(args.save_attack, 'wb') as file:
-        pickle.dump(results, file)
+        pickle.dump(attack_prediction, file)
