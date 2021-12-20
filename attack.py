@@ -265,7 +265,7 @@ if __name__ == '__main__':
                         help='The initial temperature for dual annealing algorithm. Increasing this number requires more computation.')
     parser.add_argument('--popsize', default=400, type=int,
                         help='The number of adversarial images generated each iteration in the differential evolution algorithm. Increasing this number requires more computation.')
-    parser.add_argument('--T', default=T, type=int,
+    parser.add_argument('--T', default=1.0, type=int,
                         help='The temperature for basin hopping algoirthm. Increasing this number requires more computation.')
     parser.add_argument('--samples', default=500, type=int,
                         help='The number of image samples to attack. Images are sampled randomly from the dataset.')
