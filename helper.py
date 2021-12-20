@@ -228,6 +228,11 @@ def load_results(targeted):
             result = pickle.load(file)
     return result
 
+def load_predicted_results():
+    with open('networks/results/attack_results.pkl', 'rb') as file:
+            result = pickle.load(file)
+    return result
+
 def checkpoint(results, targeted=False):
     filename = 'targeted' if targeted else 'untargeted'
 
