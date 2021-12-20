@@ -196,7 +196,7 @@ def attack_stats(df, models, network_stats):
             
             p_result = m_result[m_result.pixels == pixel]
             success_rate = len(p_result[p_result.success]) / len(p_result)
-            stats.append([model.name, val_accuracy, pixel,method, success_rate])
+            stats.append([model.name, val_accuracy, pixel, success_rate])
 
     return pd.DataFrame(stats, columns=['model', 'accuracy', 'pixels', 'attack_success_rate'])
 
