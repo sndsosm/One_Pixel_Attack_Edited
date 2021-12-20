@@ -283,7 +283,7 @@ if __name__ == '__main__':
         os.mkdir(path)
         print("Directory '%s' created" %directory)
     else:
-        continue
+      print("Directory exists")
     # Load data and model
     _, test = cifar10.load_data()
     class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
