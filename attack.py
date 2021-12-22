@@ -236,17 +236,20 @@ class PixelAttacker:
       for pixel in pixels:
                 p_result = m_result[m_result.pixels == pixel]
                 img=[]
+                orig=[]
                 for x in p_result.perturbed:
                   img.append(x)
+                for y in p_result.image:
+                    orig.append(self.x_test[y])
                 imgs=np.asarray(img)
+                origs=np.asarray(orig
                 labels=np.array(p_result.true).reshape(len(p_result.true),1)
                 for model in models:
-                        val_accuracy = np.array(self.network_stats[self.network_stats.name == model.name].accuracy)[0]
+                        val_accuracy,_ = helper.evaluate_models([model],origs,labels)
                         net_stats,_ =helper.evaluate_models([model],imgs,labels)
-                        new_stats.append([base_name,model.name, val_accuracy, pixel,s, net_stats[0][1]])
+                        new_stats.append([base_name,model.name, val_accuracy[0][1], pixel,s, net_stats[0][1]])
               
       return pd.DataFrame(new_stats, columns=['attack_model', 'evaluation_model', 'accuracy', 'pixels', 'attack_success_rate','after_attack_accuracy'])
-
 
 if __name__ == '__main__':
     model_defs = {
