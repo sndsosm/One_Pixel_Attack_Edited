@@ -93,6 +93,12 @@ class PixelAttacker:
         def callback_fn(x, convergence):
             return self.attack_success(x, self.x_test[img_id], target_class, model, targeted_attack, verbose)
 
+        def callback_fn_DA(x, f,context):
+            return self.attack_success(x, self.x_test[img_id], target_class, model, targeted_attack, verbose)
+        
+        def callback_fn_BH(x, f,accept):
+            return self.attack_success(x, self.x_test[img_id], target_class, model, targeted_attack, verbose)
+        
         if (method=='DE'):
           alg='DE'
           bounds = [(0, dim_x), (0, dim_y), (0, 256), (0, 256), (0, 256)] * pixel_count
@@ -102,13 +108,13 @@ class PixelAttacker:
         elif (method=='DA'):
           alg='DA'
           bounds = bounds = [(0, dim_x), (0, dim_y), (0, 256), (0, 256), (0, 256)] * pixel_count
-          attack_result =dual_annealing(predict_fn, bounds, maxiter=maxiter, intital_temp=temperature)
+          attack_result =dual_annealing(predict_fn, bounds, maxiter=maxiter, intital_temp=temperature, callback=callback_fn_DA)
         elif (method=='BH'):
           alg='BH'
           bounds = [(0, dim_x), (0, dim_y), (0, 255), (0, 255), (0, 255)] * pixel_count
           minimizer_kwargs = { "method": "L-BFGS-B","bounds":bounds }
           init=[randint(0,dim_x),randint(0,dim_y),randint(0,255),randint(0,255),randint(0,255)]*pixel_count
-          attack_result = basinhopping(predict_fn,init,niter=maxiter,T=T)
+          attack_result = basinhopping(predict_fn,init,niter=maxiter,T=T, callback=callback_fn_BH)
         
         
         # Calculate some useful statistics to return from this function
