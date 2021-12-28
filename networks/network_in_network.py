@@ -14,13 +14,14 @@ from networks.train_plot import PlotLearning
 
 # Code taken from https://github.com/BIGBALLON/cifar-10-cnn
 class NetworkInNetwork:
-    def __init__(self, epochs=200, batch_size=128, load_weights=True):
+    def __init__(self, epochs=200, batch_size=128,cifar=10, load_weights=True):
         self.name               = 'net_in_net'
         self.model_filename     = 'networks/models/net_in_net.h5'
         self.num_classes        = 10
         self.input_shape        = 32, 32, 3
         self.batch_size         = batch_size
         self.epochs             = epochs
+        self.cifar              = cifar
         self.iterations         = 391
         self.weight_decay       = 0.0001
         self.dropout            = 0.5
@@ -103,7 +104,10 @@ class NetworkInNetwork:
 
     def train(self):
         # load data
-        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        if (self.cifar==10):
+          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        elif (self.cifar==100):
+          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
         y_train = keras.utils.to_categorical(y_train, self.num_classes)
         y_test = keras.utils.to_categorical(y_test, self.num_classes)
         
