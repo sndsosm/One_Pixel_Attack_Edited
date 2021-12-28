@@ -9,7 +9,7 @@ from keras.initializers import RandomNormal
 from keras.layers import BatchNormalization
 from keras import optimizers
 from keras.callbacks import LearningRateScheduler, TensorBoard, ModelCheckpoint
-
+import tensorflow
 from networks.train_plot import PlotLearning
 
 # Code taken from https://github.com/BIGBALLON/cifar-10-cnn
