@@ -9,20 +9,21 @@ from keras.constraints import maxnorm
 from keras.models import load_model
 from keras.layers import GlobalAveragePooling2D, Lambda, Conv2D, MaxPooling2D, Dropout, Dense, Flatten, Activation
 from keras.preprocessing.image import ImageDataGenerator
-from keras.datasets import cifar10
+from keras.datasets import cifar10,cifar100
 
 from networks.train_plot import PlotLearning
 
 # A pure CNN model from https://arxiv.org/pdf/1412.6806.pdf
 # Code taken from https://github.com/09rohanchopra/cifar10
 class PureCnn:
-    def __init__(self, epochs=350, batch_size=128, load_weights=True):
+    def __init__(self, epochs=350, batch_size=128,cifar=10, load_weights=True):
         self.name               = 'pure_cnn'
         self.model_filename     = 'networks/models/pure_cnn.h5'
         self.num_classes        = 10
         self.input_shape        = 32, 32, 3
         self.batch_size         = batch_size
         self.epochs             = epochs
+        self.cifar              = cifar
         self.learn_rate         = 1.0e-4
         self.log_filepath       = r'networks/models/pure_cnn/'
 
@@ -74,7 +75,10 @@ class PureCnn:
         return model
     
     def train(self):
-        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        if (self.cifar==10):
+          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        elif (self.cifar==100):
+          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
         y_train = keras.utils.to_categorical(y_train, self.num_classes)
         y_test = keras.utils.to_categorical(y_test, self.num_classes)
         
@@ -135,7 +139,10 @@ class PureCnn:
         return self.predict(img)[0]
 
     def accuracy(self):
-        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        if (self.cifar==10):
+          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        elif (self.cifar==100):
+          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
         y_train = keras.utils.to_categorical(y_train, self.num_classes)
         y_test = keras.utils.to_categorical(y_test, self.num_classes)
 
