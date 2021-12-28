@@ -10,7 +10,7 @@ from keras.models import load_model
 from keras.layers import GlobalAveragePooling2D, Lambda, Conv2D, MaxPooling2D, Dropout, Dense, Flatten, Activation
 from keras.preprocessing.image import ImageDataGenerator
 from keras.datasets import cifar10,cifar100
-
+import tensorflow
 from networks.train_plot import PlotLearning
 
 # A pure CNN model from https://arxiv.org/pdf/1412.6806.pdf
