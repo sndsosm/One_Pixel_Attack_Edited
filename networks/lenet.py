@@ -12,13 +12,14 @@ from networks.train_plot import PlotLearning
 
 # Code taken from https://github.com/BIGBALLON/cifar-10-cnn
 class LeNet:
-    def __init__(self, epochs=200, batch_size=128, load_weights=True):
+    def __init__(self, epochs=200, batch_size=128,cifar=10, load_weights=True):
         self.name               = 'lenet'
         self.model_filename     = 'networks/models/lenet.h5'
         self.num_classes        = 10
         self.input_shape        = 32, 32, 3
         self.batch_size         = batch_size
         self.epochs             = epochs
+        self.cifar              = cifar
         self.iterations         = 391
         self.weight_decay       = 0.0001
         self.log_filepath       = r'networks/models/lenet/'
@@ -67,7 +68,10 @@ class LeNet:
         return 0.0004
 
     def train(self):
-        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        if (self.cifar==10):
+          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        elif (self.cifar==100):
+          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
         y_train = keras.utils.to_categorical(y_train, self.num_classes)
         y_test = keras.utils.to_categorical(y_test, self.num_classes)
         
