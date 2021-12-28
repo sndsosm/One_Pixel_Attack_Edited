@@ -1,7 +1,7 @@
 import keras
 import numpy as np
 from keras import optimizers
-from keras.datasets import cifar10
+from keras.datasets import cifar10,cifar100
 from keras.models import Sequential, load_model
 from keras.layers import Conv2D, Dense, Flatten, MaxPooling2D
 from keras.callbacks import LearningRateScheduler, TensorBoard, ModelCheckpoint
@@ -130,7 +130,10 @@ class LeNet:
         return self.predict(img)[0]
 
     def accuracy(self):
-        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        if (self.cifar==10):
+          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        elif (self.cifar==100):
+          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
         y_train = keras.utils.to_categorical(y_train, self.num_classes)
         y_test = keras.utils.to_categorical(y_test, self.num_classes)
 
