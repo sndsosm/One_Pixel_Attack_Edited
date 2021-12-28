@@ -1,6 +1,6 @@
 import keras
 import numpy as np
-from keras.datasets import cifar10
+from keras.datasets import cifar10,cifar100
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import BatchNormalization
 from keras.layers import Conv2D, Dense, Input, add, Activation, GlobalAveragePooling2D
@@ -12,7 +12,7 @@ from networks.train_plot import PlotLearning
 
 # Code taken from https://github.com/BIGBALLON/cifar-10-cnn
 class ResNet:
-    def __init__(self, epochs=200, batch_size=128, load_weights=True):
+    def __init__(self, epochs=200, batch_size=128,cifar=10, load_weights=True):
         self.name               = 'resnet'
         self.model_filename     = 'networks/models/resnet.h5'
         
@@ -22,6 +22,7 @@ class ResNet:
         self.img_channels       = 3
         self.batch_size         = batch_size
         self.epochs             = epochs
+        self.cifar              = cifar
         self.iterations         = 50000 // self.batch_size
         self.weight_decay       = 0.0001
         self.log_filepath       = r'networks/models/resnet/'
@@ -117,7 +118,10 @@ class ResNet:
 
     def train(self):
         # load data
-        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        if (self.cifar==10):
+          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        elif (self.cifar==100):
+          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
         y_train = keras.utils.to_categorical(y_train, self.num_classes)
         y_test = keras.utils.to_categorical(y_test, self.num_classes)
         
