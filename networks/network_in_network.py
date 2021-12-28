@@ -108,8 +108,8 @@ class NetworkInNetwork:
           (x_train, y_train), (x_test, y_test) = cifar10.load_data()
         elif (self.cifar==100):
           (x_train, y_train), (x_test, y_test) = cifar100.load_data()
-        y_train = keras.utils.to_categorical(y_train, self.num_classes)
-        y_test = keras.utils.to_categorical(y_test, self.num_classes)
+        y_train = tensorflow.keras.utils.to_categorical(y_train, self.num_classes)
+        y_test = tensorflow.keras.utils.to_categorical(y_test, self.num_classes)
         
         x_train, x_test = self.color_preprocessing(x_train, x_test)
 
@@ -163,8 +163,8 @@ class NetworkInNetwork:
           (x_train, y_train), (x_test, y_test) = cifar10.load_data()
         elif (self.cifar==100):
           (x_train, y_train), (x_test, y_test) = cifar100.load_data()
-        y_train = keras.utils.to_categorical(y_train, self.num_classes)
-        y_test = keras.utils.to_categorical(y_test, self.num_classes)
+        y_train = tensorflow.keras.utils.to_categorical(y_train, self.num_classes)
+        y_test = tensorflow.keras.utils.to_categorical(y_test, self.num_classes)
 
         # color preprocessing
         x_train, x_test = self.color_preprocessing(x_train, x_test)
