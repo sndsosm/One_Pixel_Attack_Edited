@@ -7,7 +7,7 @@ from keras.layers import Conv2D, Dense, Input, add, Activation, GlobalAveragePoo
 from keras.callbacks import LearningRateScheduler, TensorBoard, ModelCheckpoint
 from keras.models import Model, load_model
 from keras import optimizers, regularizers
-
+import tensorflow
 from networks.train_plot import PlotLearning
 
 # Code taken from https://github.com/BIGBALLON/cifar-10-cnn
