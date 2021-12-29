@@ -57,7 +57,7 @@ class LeNet:
         model.add(Flatten())
         model.add(Dense(120, activation = 'relu', kernel_initializer='he_normal', kernel_regularizer=l2(self.weight_decay) ))
         model.add(Dense(84, activation = 'relu', kernel_initializer='he_normal', kernel_regularizer=l2(self.weight_decay) ))
-        model.add(Dense(10, activation = 'softmax', kernel_initializer='he_normal', kernel_regularizer=l2(self.weight_decay) ))
+        model.add(Dense(self.num_classes, activation = 'softmax', kernel_initializer='he_normal', kernel_regularizer=l2(self.weight_decay) ))
         sgd = tensorflow.keras.optimizers.SGD(lr=.1, momentum=0.9, nesterov=True)
         model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
         return model
