@@ -137,7 +137,7 @@ class ResNet:
         resnet.summary()
 
         # set optimizer
-        sgd = optimizers.SGD(lr=.1, momentum=0.9, nesterov=True)
+        sgd = tensorflow.keras.optimizers.SGD(lr=.1, momentum=0.9, nesterov=True)
         resnet.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
         # set callback
