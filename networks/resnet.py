@@ -6,7 +6,7 @@ from keras.layers import BatchNormalization
 from keras.layers import Conv2D, Dense, Input, add, Activation, GlobalAveragePooling2D
 from keras.callbacks import LearningRateScheduler, TensorBoard, ModelCheckpoint
 from keras.models import Model, load_model
-from keras import optimizers, regularizers
+from tensorflow.keras import optimizers, regularizers
 import tensorflow
 from networks.train_plot import PlotLearning
 
