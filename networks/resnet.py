@@ -14,10 +14,7 @@ from networks.train_plot import PlotLearning
 class ResNet:
     def __init__(self, epochs=200, batch_size=128,cifar=10, load_weights=True):
         self.name               = 'resnet'
-        self.model_filename     = 'networks/models/resnet.h5'
-        
         self.stack_n            = 5    
-        self.num_classes        = 10
         self.img_rows, self.img_cols = 32, 32
         self.img_channels       = 3
         self.batch_size         = batch_size
@@ -26,7 +23,12 @@ class ResNet:
         self.iterations         = 50000 // self.batch_size
         self.weight_decay       = 0.0001
         self.log_filepath       = r'networks/models/resnet/'
-
+        if (self.cifar==10):
+          self.num_classes= 10
+          self.model_filename     = 'networks/models/resnet_10.h5'
+        elif (self.cifar==100):
+          self.num_classes= 100
+          self.model_filename     = 'networks/models/resnet_100.h5'
         if load_weights:
             try:
                 self._model = load_model(self.model_filename)
