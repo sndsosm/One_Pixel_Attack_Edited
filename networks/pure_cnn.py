@@ -18,15 +18,18 @@ from networks.train_plot import PlotLearning
 class PureCnn:
     def __init__(self, epochs=350, batch_size=128,cifar=10, load_weights=True):
         self.name               = 'pure_cnn'
-        self.model_filename     = 'networks/models/pure_cnn.h5'
-        self.num_classes        = 10
         self.input_shape        = 32, 32, 3
         self.batch_size         = batch_size
         self.epochs             = epochs
         self.cifar              = cifar
         self.learn_rate         = 1.0e-4
         self.log_filepath       = r'networks/models/pure_cnn/'
-
+        if (self.cifar==10):
+          self.num_classes= 10
+          self.model_filename     = 'networks/models/pure_cnn_10.h5'
+        elif (self.cifar==100):
+          self.num_classes= 100
+          self.model_filename     = 'networks/models/pure_cnn_100.h5'
         if load_weights:
             try:
                 self._model = load_model(self.model_filename)
