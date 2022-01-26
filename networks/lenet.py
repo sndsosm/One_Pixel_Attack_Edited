@@ -1,40 +1,35 @@
 import keras
 import numpy as np
 from keras import optimizers
-from keras.datasets import cifar10,cifar100
+from keras.datasets import cifar10
 from keras.models import Sequential, load_model
 from keras.layers import Conv2D, Dense, Flatten, MaxPooling2D
 from keras.callbacks import LearningRateScheduler, TensorBoard, ModelCheckpoint
 from keras.preprocessing.image import ImageDataGenerator
 from keras.regularizers import l2
-import tensorflow
+
 from networks.train_plot import PlotLearning
 
 # Code taken from https://github.com/BIGBALLON/cifar-10-cnn
 class LeNet:
-    def __init__(self, epochs=200, batch_size=128,cifar=10, load_weights=True):
+    def __init__(self, epochs=200, batch_size=128, load_weights=True):
         self.name               = 'lenet'
+        self.model_filename     = 'networks/models/lenet.h5'
+        self.num_classes        = 10
         self.input_shape        = 32, 32, 3
         self.batch_size         = batch_size
         self.epochs             = epochs
-        self.cifar              = cifar
         self.iterations         = 391
         self.weight_decay       = 0.0001
         self.log_filepath       = r'networks/models/lenet/'
-        if (self.cifar==10):
-          self.num_classes= 10
-          self.model_filename     = 'networks/models/lenet_10.h5'
-        elif (self.cifar==100):
-          self.num_classes= 100
-          self.model_filename     = 'networks/models/lenet_100.h5'
-        
+
         if load_weights:
             try:
                 self._model = load_model(self.model_filename)
                 print('Successfully loaded', self.name)
             except (ImportError, ValueError, OSError):
                 print('Failed to load', self.name)
-    
+
     def count_params(self):
         return self._model.count_params()
 
@@ -57,8 +52,8 @@ class LeNet:
         model.add(Flatten())
         model.add(Dense(120, activation = 'relu', kernel_initializer='he_normal', kernel_regularizer=l2(self.weight_decay) ))
         model.add(Dense(84, activation = 'relu', kernel_initializer='he_normal', kernel_regularizer=l2(self.weight_decay) ))
-        model.add(Dense(self.num_classes, activation = 'softmax', kernel_initializer='he_normal', kernel_regularizer=l2(self.weight_decay) ))
-        sgd = tensorflow.keras.optimizers.SGD(lr=.1, momentum=0.9, nesterov=True)
+        model.add(Dense(10, activation = 'softmax', kernel_initializer='he_normal', kernel_regularizer=l2(self.weight_decay) ))
+        sgd = optimizers.SGD(lr=.1, momentum=0.9, nesterov=True)
         model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
         return model
 
@@ -72,12 +67,10 @@ class LeNet:
         return 0.0004
 
     def train(self):
-        if (self.cifar==10):
-          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-        elif (self.cifar==100):
-          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
-        y_train = tensorflow.keras.utils.to_categorical(y_train, self.num_classes)
-        
+        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        y_train = keras.utils.to_categorical(y_train, self.num_classes)
+        y_test = keras.utils.to_categorical(y_test, self.num_classes)
+
         # color preprocessing
         x_train, x_test = self.color_preprocessing(x_train, x_test)
 
@@ -128,22 +121,17 @@ class LeNet:
     def predict(self, img):
         processed = self.color_process(img)
         return self._model.predict(processed, batch_size=self.batch_size)
-    
+
     def predict_one(self, img):
         return self.predict(img)[0]
 
     def accuracy(self):
-        if (self.cifar==10):
-          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-        elif (self.cifar==100):
-          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
-        y_train = tensorflow.keras.utils.to_categorical(y_train, self.num_classes)
-        y_test = tensorflow.keras.utils.to_categorical(y_test, self.num_classes)
+        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        y_train = keras.utils.to_categorical(y_train, self.num_classes)
+        y_test = keras.utils.to_categorical(y_test, self.num_classes)
 
         # color preprocessing
         x_train, x_test = self.color_preprocessing(x_train, x_test)
 
         return self._model.evaluate(x_test, y_test, verbose=0)[1]
-
-
 
