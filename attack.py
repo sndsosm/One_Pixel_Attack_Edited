@@ -248,7 +248,7 @@ class PixelAttacker:
                 for y in p_result.image:
                     orig.append(self.x_test[y])
                 imgs=np.asarray(img)
-                origs=np.asarray(orig
+                origs=np.asarray(orig)
                 labels=np.array(p_result.true).reshape(len(p_result.true),1)
                 for model in models:
                         val_accuracy,_ = helper.evaluate_models([model],origs,labels)
