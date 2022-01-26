@@ -9,37 +9,33 @@ from keras.constraints import maxnorm
 from keras.models import load_model
 from keras.layers import GlobalAveragePooling2D, Lambda, Conv2D, MaxPooling2D, Dropout, Dense, Flatten, Activation
 from keras.preprocessing.image import ImageDataGenerator
-from keras.datasets import cifar10,cifar100
-import tensorflow
+from keras.datasets import cifar10
+
 from networks.train_plot import PlotLearning
 
 # A pure CNN model from https://arxiv.org/pdf/1412.6806.pdf
 # Code taken from https://github.com/09rohanchopra/cifar10
 class PureCnn:
-    def __init__(self, epochs=350, batch_size=128,cifar=10, load_weights=True):
+    def __init__(self, epochs=350, batch_size=128, load_weights=True):
         self.name               = 'pure_cnn'
+        self.model_filename     = 'networks/models/pure_cnn.h5'
+        self.num_classes        = 10
         self.input_shape        = 32, 32, 3
         self.batch_size         = batch_size
         self.epochs             = epochs
-        self.cifar              = cifar
         self.learn_rate         = 1.0e-4
         self.log_filepath       = r'networks/models/pure_cnn/'
-        if (self.cifar==10):
-          self.num_classes= 10
-          self.model_filename     = 'networks/models/pure_cnn_10.h5'
-        elif (self.cifar==100):
-          self.num_classes= 100
-          self.model_filename     = 'networks/models/pure_cnn_100.h5'
+
         if load_weights:
             try:
                 self._model = load_model(self.model_filename)
                 print('Successfully loaded', self.name)
             except (ImportError, ValueError, OSError):
                 print('Failed to load', self.name)
-    
+
     def count_params(self):
         return self._model.count_params()
-        
+
     def color_preprocessing(self, x_train, x_test):
         x_train = x_train.astype('float32')
         x_test = x_test.astype('float32')
@@ -52,39 +48,36 @@ class PureCnn:
 
     def pure_cnn_network(self, input_shape):
         model = Sequential()
-        
+
         model.add(Conv2D(96, (3, 3), activation='relu', padding = 'same', input_shape=input_shape))    
         model.add(Dropout(0.2))
-        
+
         model.add(Conv2D(96, (3, 3), activation='relu', padding = 'same'))  
         model.add(Conv2D(96, (3, 3), activation='relu', padding = 'same', strides = 2))    
         model.add(Dropout(0.5))
-        
+
         model.add(Conv2D(192, (3, 3), activation='relu', padding = 'same'))    
         model.add(Conv2D(192, (3, 3), activation='relu', padding = 'same'))
         model.add(Conv2D(192, (3, 3), activation='relu', padding = 'same', strides = 2))    
         model.add(Dropout(0.5))    
-        
+
         model.add(Conv2D(192, (3, 3), padding = 'same'))
         model.add(Activation('relu'))
         model.add(Conv2D(192, (1, 1),padding='valid'))
         model.add(Activation('relu'))
-        model.add(Conv2D(self.num_classes, (1, 1), padding='valid'))
+        model.add(Conv2D(10, (1, 1), padding='valid'))
 
         model.add(GlobalAveragePooling2D())
-        
+
         model.add(Activation('softmax'))
 
         return model
-    
+
     def train(self):
-        if (self.cifar==10):
-          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-        elif (self.cifar==100):
-          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
-        y_train = tensorflow.keras.utils.to_categorical(y_train, self.num_classes)
-        y_test = tensorflow.keras.utils.to_categorical(y_test, self.num_classes)
-        
+        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        y_train = keras.utils.to_categorical(y_train, self.num_classes)
+        y_test = keras.utils.to_categorical(y_test, self.num_classes)
+
         # color preprocessing
         x_train, x_test = self.color_preprocessing(x_train, x_test)
 
@@ -137,17 +130,14 @@ class PureCnn:
     def predict(self, img):
         processed = self.color_process(img)
         return self._model.predict(processed, batch_size=self.batch_size)
-    
+
     def predict_one(self, img):
         return self.predict(img)[0]
 
     def accuracy(self):
-        if (self.cifar==10):
-          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-        elif (self.cifar==100):
-          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
-        y_train = tensorflow.keras.utils.to_categorical(y_train, self.num_classes)
-        y_test = tensorflow.keras.utils.to_categorical(y_test, self.num_classes)
+        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        y_train = keras.utils.to_categorical(y_train, self.num_classes)
+        y_test = keras.utils.to_categorical(y_test, self.num_classes)
 
         # color preprocessing
         x_train, x_test = self.color_preprocessing(x_train, x_test)
