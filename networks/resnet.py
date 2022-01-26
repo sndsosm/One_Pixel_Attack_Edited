@@ -1,41 +1,38 @@
 import keras
 import numpy as np
-from keras.datasets import cifar10,cifar100
+from keras.datasets import cifar10
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import BatchNormalization
 from keras.layers import Conv2D, Dense, Input, add, Activation, GlobalAveragePooling2D
 from keras.callbacks import LearningRateScheduler, TensorBoard, ModelCheckpoint
 from keras.models import Model, load_model
-from tensorflow.keras import optimizers, regularizers
-import tensorflow
+from keras import optimizers, regularizers
+
 from networks.train_plot import PlotLearning
 
 # Code taken from https://github.com/BIGBALLON/cifar-10-cnn
 class ResNet:
-    def __init__(self, epochs=200, batch_size=128,cifar=10, load_weights=True):
+    def __init__(self, epochs=200, batch_size=128, load_weights=True):
         self.name               = 'resnet'
+        self.model_filename     = 'networks/models/resnet.h5'
+
         self.stack_n            = 5    
+        self.num_classes        = 10
         self.img_rows, self.img_cols = 32, 32
         self.img_channels       = 3
         self.batch_size         = batch_size
         self.epochs             = epochs
-        self.cifar              = cifar
         self.iterations         = 50000 // self.batch_size
         self.weight_decay       = 0.0001
         self.log_filepath       = r'networks/models/resnet/'
-        if (self.cifar==10):
-          self.num_classes= 10
-          self.model_filename     = 'networks/models/resnet_10.h5'
-        elif (self.cifar==100):
-          self.num_classes= 100
-          self.model_filename     = 'networks/models/resnet_100.h5'
+
         if load_weights:
             try:
                 self._model = load_model(self.model_filename)
                 print('Successfully loaded', self.name)
             except (ImportError, ValueError, OSError):
                 print('Failed to load', self.name)
-    
+
     def count_params(self):
         return self._model.count_params()
 
@@ -102,7 +99,7 @@ class ResNet:
         x = residual_block(x,32,True)
         for _ in range(1,stack_n):
             x = residual_block(x,32,False)
-        
+
         # input: 16x16x32 output: 8x8x64
         x = residual_block(x,64,True)
         for _ in range(1,stack_n):
@@ -120,13 +117,10 @@ class ResNet:
 
     def train(self):
         # load data
-        if (self.cifar==10):
-          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-        elif (self.cifar==100):
-          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
-        y_train = tensorflow.keras.utils.to_categorical(y_train, self.num_classes)
-        y_test = tensorflow.keras.utils.to_categorical(y_test, self.num_classes)
-        
+        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        y_train = keras.utils.to_categorical(y_train, self.num_classes)
+        y_test = keras.utils.to_categorical(y_test, self.num_classes)
+
         # color preprocessing
         x_train, x_test = self.color_preprocessing(x_train, x_test)
 
@@ -137,7 +131,7 @@ class ResNet:
         resnet.summary()
 
         # set optimizer
-        sgd = tensorflow.keras.optimizers.SGD(lr=.1, momentum=0.9, nesterov=True)
+        sgd = optimizers.SGD(lr=.1, momentum=0.9, nesterov=True)
         resnet.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
         # set callback
@@ -182,19 +176,16 @@ class ResNet:
     def predict(self, img):
         processed = self.color_process(img)
         return self._model.predict(processed, batch_size=self.batch_size)
-    
+
     def predict_one(self, img):
         return self.predict(img)[0]
 
     def accuracy(self):
-        if (self.cifar==10):
-          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-        elif (self.cifar==100):
-          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
-        y_train = tensorflow.keras.utils.to_categorical(y_train, self.num_classes)
-        y_test = tensorflow.keras.utils.to_categorical(y_test, self.num_classes)
-        
+        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        y_train = keras.utils.to_categorical(y_train, self.num_classes)
+        y_test = keras.utils.to_categorical(y_test, self.num_classes)
+
         # color preprocessing
         x_train, x_test = self.color_preprocessing(x_train, x_test)
 
-        return self._model.evaluate(x_test, y_test, verbose=0)[1]
+        return self._model.evaluate(x_test, y_test, verbose=0)[1] 
