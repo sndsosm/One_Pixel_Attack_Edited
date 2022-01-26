@@ -1,6 +1,6 @@
 import keras
 import numpy as np
-from keras.datasets import cifar10,cifar100
+from keras.datasets import cifar10
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation, Flatten
@@ -9,34 +9,30 @@ from keras.initializers import RandomNormal
 from keras.layers import BatchNormalization
 from keras import optimizers
 from keras.callbacks import LearningRateScheduler, TensorBoard, ModelCheckpoint
-import tensorflow
+
 from networks.train_plot import PlotLearning
 
 # Code taken from https://github.com/BIGBALLON/cifar-10-cnn
 class NetworkInNetwork:
-    def __init__(self, epochs=200, batch_size=128,cifar=10, load_weights=True):
+    def __init__(self, epochs=200, batch_size=128, load_weights=True):
         self.name               = 'net_in_net'
+        self.model_filename     = 'networks/models/net_in_net.h5'
+        self.num_classes        = 10
         self.input_shape        = 32, 32, 3
         self.batch_size         = batch_size
         self.epochs             = epochs
-        self.cifar              = cifar
         self.iterations         = 391
         self.weight_decay       = 0.0001
         self.dropout            = 0.5
         self.log_filepath       = r'networks/models/net_in_net/'
-        if (self.cifar==10):
-          self.num_classes= 10
-          self.model_filename     = '/content/networks/models/net_in_net_10.h5'
-        elif (self.cifar==100):
-          self.num_classes= 100
-          self.model_filename     = '/content/networks/models/net_in_net_100.h5'
+
         if load_weights:
             try:
                 self._model = load_model(self.model_filename)
                 print('Successfully loaded', self.name)
             except (ImportError, ValueError, OSError):
                 print('Failed to load', self.name)
-    
+
     def count_params(self):
         return self._model.count_params()
 
@@ -72,9 +68,9 @@ class NetworkInNetwork:
         model.add(BatchNormalization())
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(3, 3),strides=(2,2),padding = 'same'))
-        
+
         model.add(Dropout(self.dropout))
-        
+
         model.add(Conv2D(192, (5, 5), padding='same', kernel_regularizer=keras.regularizers.l2(self.weight_decay), kernel_initializer="he_normal"))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
@@ -85,35 +81,32 @@ class NetworkInNetwork:
         model.add(BatchNormalization())
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(3, 3),strides=(2,2),padding = 'same'))
-        
+
         model.add(Dropout(self.dropout))
-        
+
         model.add(Conv2D(192, (3, 3), padding='same', kernel_regularizer=keras.regularizers.l2(self.weight_decay), kernel_initializer="he_normal"))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
         model.add(Conv2D(192, (1, 1), padding='same', kernel_regularizer=keras.regularizers.l2(self.weight_decay), kernel_initializer="he_normal"))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
-        model.add(Conv2D(self.num_classes, (1, 1), padding='same', kernel_regularizer=keras.regularizers.l2(self.weight_decay), kernel_initializer="he_normal"))
+        model.add(Conv2D(10, (1, 1), padding='same', kernel_regularizer=keras.regularizers.l2(self.weight_decay), kernel_initializer="he_normal"))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
-        
+
         model.add(GlobalAveragePooling2D())
         model.add(Activation('softmax'))
-        
-        sgd = tensorflow.keras.optimizers.SGD(lr=.1, momentum=0.9, nesterov=True)
+
+        sgd = optimizers.SGD(lr=.1, momentum=0.9, nesterov=True)
         model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
         return model
 
     def train(self):
         # load data
-        if (self.cifar==10):
-          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-        elif (self.cifar==100):
-          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
-        y_train = tensorflow.keras.utils.to_categorical(y_train, self.num_classes)
-        y_test = tensorflow.keras.utils.to_categorical(y_test, self.num_classes)
-        
+        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        y_train = keras.utils.to_categorical(y_train, self.num_classes)
+        y_test = keras.utils.to_categorical(y_test, self.num_classes)
+
         x_train, x_test = self.color_preprocessing(x_train, x_test)
 
         # build network
@@ -138,7 +131,7 @@ class NetworkInNetwork:
 
         # start training
         model.fit_generator(datagen.flow(x_train, y_train,batch_size=self.batch_size),steps_per_epoch=self.iterations,epochs=self.epochs,callbacks=cbks,validation_data=(x_test, y_test))
-        
+
         model.save(self.model_filename)
 
         self._model = model
@@ -157,17 +150,14 @@ class NetworkInNetwork:
     def predict(self, img):
         processed = self.color_process(img)
         return self._model.predict(processed, batch_size=self.batch_size)
-    
+
     def predict_one(self, img):
         return self.predict(img)[0]
 
     def accuracy(self):
-        if (self.cifar==10):
-          (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-        elif (self.cifar==100):
-          (x_train, y_train), (x_test, y_test) = cifar100.load_data()
-        y_train = tensorflow.keras.utils.to_categorical(y_train, self.num_classes)
-        y_test = tensorflow.keras.utils.to_categorical(y_test, self.num_classes)
+        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        y_train = keras.utils.to_categorical(y_train, self.num_classes)
+        y_test = keras.utils.to_categorical(y_test, self.num_classes)
 
         # color preprocessing
         x_train, x_test = self.color_preprocessing(x_train, x_test)
