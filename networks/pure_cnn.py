@@ -69,7 +69,7 @@ class PureCnn:
         model.add(Activation('relu'))
         model.add(Conv2D(192, (1, 1),padding='valid'))
         model.add(Activation('relu'))
-        model.add(Conv2D(10, (1, 1), padding='valid'))
+        model.add(Conv2D(self.num_classes, (1, 1), padding='valid'))
 
         model.add(GlobalAveragePooling2D())
         
