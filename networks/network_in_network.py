@@ -94,7 +94,7 @@ class NetworkInNetwork:
         model.add(Conv2D(192, (1, 1), padding='same', kernel_regularizer=keras.regularizers.l2(self.weight_decay), kernel_initializer="he_normal"))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
-        model.add(Conv2D(10, (1, 1), padding='same', kernel_regularizer=keras.regularizers.l2(self.weight_decay), kernel_initializer="he_normal"))
+        model.add(Conv2D(self.num_classes, (1, 1), padding='same', kernel_regularizer=keras.regularizers.l2(self.weight_decay), kernel_initializer="he_normal"))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
         
