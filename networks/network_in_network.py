@@ -26,10 +26,10 @@ class NetworkInNetwork:
         self.log_filepath       = r'networks/models/net_in_net/'
         if (self.cifar==10):
           self.num_classes= 10
-          self.model_filename     = 'networks/models/net_in_net_10.h5'
+          self.model_filename     = '/content/networks/models/net_in_net_10.h5'
         elif (self.cifar==100):
           self.num_classes= 100
-          self.model_filename     = 'networks/models/net_in_net_100.h5'
+          self.model_filename     = '/content/networks/models/net_in_net_100.h5'
         if load_weights:
             try:
                 self._model = load_model(self.model_filename)
