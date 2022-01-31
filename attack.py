@@ -229,7 +229,7 @@ class PixelAttacker:
                         model_results.append(result)
 
           results += model_results
-          helper.checkpoint(results, targeted)
+          helper.checkpoint(results, targeted, model,pixel_count,method)
       return results
 
     def predict_attack(self, base, models, df):
@@ -263,6 +263,7 @@ if __name__ == '__main__':
         'pure_cnn': PureCnn,
         'net_in_net': NetworkInNetwork,
         'resnet': ResNet,
+        'vgg16': cifar10vgg,
     }
 
     parser = argparse.ArgumentParser(description='Attack models on Cifar10')
