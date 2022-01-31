@@ -236,7 +236,7 @@ def load_predicted_results():
 
 def checkpoint(results,model,pixel_count,method, targeted=False):
     filename = 'targeted' if targeted else 'untargeted'
-    filename=filename + '_' + method +'_' + pixel_count + '_'+model.name
+    filename=filename + '_' + method +'_' + pixel_count + '_'+ model.name
     with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
         file.truncate(0)
         pickle.dump(results, file)
@@ -246,9 +246,9 @@ import pandas  as pd
 from sklearn.metrics import classification_report, confusion_matrix
 def heatmap(df):
     
-    Y_pred = df['predicted_class']
+    Y_pred = df.predicted_class
     y_pred = np.argmax(Y_pred, axis=1)
-    Y_test = df['actual_class']
+    Y_test = df.actual_class
     y_test=np.argmax(Y_test, axis=1)
     for ix in range(len(y_pred)):
         print(ix, confusion_matrix(np.argmax(y_test,axis=1),y_pred)[ix].sum())
