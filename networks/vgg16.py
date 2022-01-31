@@ -14,6 +14,7 @@ from keras import regularizers
 class cifar10vgg:
     def __init__(self,train=True):
         self.num_classes = 10
+        self.name= 'vgg16'
         self.weight_decay = 0.0005
         self.x_shape = [32,32,3]
 
