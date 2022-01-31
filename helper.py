@@ -250,13 +250,13 @@ def heatmap(df):
     y_pred = np.argmax(Y_pred, axis=1)
     Y_test = df['actual_class']
     y_test=np.argmax(Y_test, axis=1)
-    for ix in range(len(y_pred):
+    for ix in range(len(y_pred)):
         print(ix, confusion_matrix(np.argmax(y_test,axis=1),y_pred)[ix].sum())
     cm = confusion_matrix(np.argmax(y_test,axis=1),y_pred)
     print(cm)
 
-    df_cm = pd.DataFrame(cm, range(10),
-                      range(10))
+    df_cm = pd.DataFrame(cm, range(len(y_pred)),
+                       range(len(y_pred)))
     plt.figure(figsize = (10,7))
     sn.set(font_scale=1.4)#for label size
     sn.heatmap(df_cm, annot=True,annot_kws={"size": 12})# font size
