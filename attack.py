@@ -229,6 +229,7 @@ class PixelAttacker:
                         model_results.append(result)
 
           results += model_results
+          helper.heatmap(results)
           helper.checkpoint(results, targeted, model,pixel_count,method)
       return results
 
