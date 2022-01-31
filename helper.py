@@ -246,9 +246,9 @@ import pandas  as pd
 from sklearn.metrics import classification_report, confusion_matrix
 def heatmap(df):
     
-    Y_pred = df.predicted_class
+    Y_pred = df.predicted
     y_pred = np.argmax(Y_pred, axis=1)
-    Y_test = df.actual_class
+    Y_test = df.true
     y_test=np.argmax(Y_test, axis=1)
     for ix in range(len(y_pred)):
         print(ix, confusion_matrix(np.argmax(y_test,axis=1),y_pred)[ix].sum())
