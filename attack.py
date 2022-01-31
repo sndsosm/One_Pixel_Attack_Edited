@@ -203,6 +203,7 @@ class PixelAttacker:
 
             results += model_results
             helper.checkpoint(results,model,pixel_count,method, targeted)
+            helper.heatmap(results)
         return results
         
     def new_attack_all(self, models, samples, pixels,method,temperature,T, targeted, 
@@ -229,8 +230,9 @@ class PixelAttacker:
                         model_results.append(result)
 
           results += model_results
+          
+          helper.checkpoint(results, model,pixel_count,method, targeted)
           helper.heatmap(results)
-          helper.checkpoint(results, targeted, model,pixel_count,method)
       return results
 
     def predict_attack(self, base, models, df):
