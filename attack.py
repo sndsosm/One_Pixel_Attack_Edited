@@ -202,7 +202,7 @@ class PixelAttacker:
                         model_results.append(result)
 
             results += model_results
-            helper.checkpoint(results, targeted)
+            helper.checkpoint(results,model,pixel_count,method, targeted)
         return results
         
     def new_attack_all(self, models, samples, pixels,method,temperature,T, targeted, 
