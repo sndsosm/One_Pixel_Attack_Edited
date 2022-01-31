@@ -240,8 +240,28 @@ def checkpoint(results,model,pixel_count,method, targeted=False):
     with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
         file.truncate(0)
         pickle.dump(results, file)
+# Visualizing of confusion matrix
+import seaborn as sn
+import pandas  as pd
+from sklearn.metrics import classification_report, confusion_matrix
+def heatmap(df):
+    
+    Y_pred = df['predicted_class']
+    y_pred = np.argmax(Y_pred, axis=1)
+    Y_test = df['actual_class']
+    y_test=np.argmax(Y_test, axis=1)
+    for ix in range(len(y_pred):
+        print(ix, confusion_matrix(np.argmax(y_test,axis=1),y_pred)[ix].sum())
+    cm = confusion_matrix(np.argmax(y_test,axis=1),y_pred)
+    print(cm)
 
-
+    df_cm = pd.DataFrame(cm, range(10),
+                      range(10))
+    plt.figure(figsize = (10,7))
+    sn.set(font_scale=1.4)#for label size
+    sn.heatmap(df_cm, annot=True,annot_kws={"size": 12})# font size
+    plt.show()
+                    
 def download_from_url(url, dst):
     """
     @param: url to download file
