@@ -236,7 +236,7 @@ def load_predicted_results():
 
 def checkpoint(results,model,pixel_count,method, targeted=False):
     filename = 'targeted' if targeted else 'untargeted'
-    filename=filename + '_' + method +'_' + pixel_count + '_'+ model.name
+    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model.name
     with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
         file.truncate(0)
         pickle.dump(results, file)
