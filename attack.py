@@ -10,7 +10,7 @@ from networks.lenet import LeNet
 from networks.pure_cnn import PureCnn
 from networks.network_in_network import NetworkInNetwork
 from networks.resnet import ResNet
-
+from networks.vgg16 import cifar10vgg
 import os
 # Helper functions
 from differential_evolution import differential_evolution
