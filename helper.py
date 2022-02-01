@@ -244,8 +244,11 @@ def checkpoint(results,model,pixel_count,method, targeted=False):
 import seaborn as sn
 import pandas  as pd
 from sklearn.metrics import classification_report, confusion_matrix
+
 def heatmap(df):
-    
+    columns = ['model', 'pixels','method', 'image', 'true', 'predicted', 'success', 'cdiff', 'prior_probs', 'predicted_probs',
+               'perturbation','perturbed']
+    results_table = pd.DataFrame(df, columns=columns)
     Y_pred = df.predicted
     y_pred = np.argmax(Y_pred, axis=1)
     Y_test = df.true
