@@ -223,14 +223,14 @@ import os.path
 def load_results(model,pixel_count,method, targeted=False):
     filename = 'targeted' if targeted else 'untargeted'
     filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model
-    with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
+    with open('networks/results/' + filename + '_results.pkl', 'rb') as file:
         result = pickle.load(file)
     return result
 
 def load_predicted_results(model,pixel_count,method, targeted=False):
     filename = 'targeted' if targeted else 'untargeted'
     filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model +'_'+'attack'
-    with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
+    with open('networks/results/' + filename + '_results.pkl', 'rb') as file:
         result = pickle.load(file)
     return result
 
