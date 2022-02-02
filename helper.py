@@ -220,13 +220,11 @@ def evaluate_models(models, x_test, y_test):
 
 import os.path
 
-def load_results(targeted):
-    if (targeted==False):
-        with open('networks/results/untargeted_results.pkl', 'rb') as file:
-            result = pickle.load(file)
-    else:
-        with open('networks/results/targeted_results.pkl', 'rb') as file:
-            result = pickle.load(file)
+def load_results(model,pixel_count,method, targeted=False):
+    filename = 'targeted' if targeted else 'untargeted'
+    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model.name
+    with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
+        result = pickle.load(file)
     return result
 
 def load_predicted_results():
