@@ -235,9 +235,19 @@ def load_predicted_results():
 def checkpoint(results,model,pixel_count,method, targeted=False):
     filename = 'targeted' if targeted else 'untargeted'
     filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model.name
+    print('Saving to', filename)
     with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
         file.truncate(0)
         pickle.dump(results, file)
+        
+def checkpoint_att(results,model,pixel_count,method, targeted=False):
+    filename = 'targeted' if targeted else 'untargeted'
+    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model.name
+    print('Saving to', filename)
+    with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
+        file.truncate(0)
+        pickle.dump(results, file)
+        
 # Visualizing of confusion matrix
 import seaborn as sn
 import pandas  as pd
