@@ -222,14 +222,16 @@ import os.path
 
 def load_results(model,pixel_count,method, targeted=False):
     filename = 'targeted' if targeted else 'untargeted'
-    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model.name
+    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model
     with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
         result = pickle.load(file)
     return result
 
 def load_predicted_results():
-    with open('networks/results/attack_results.pkl', 'rb') as file:
-            result = pickle.load(file)
+    filename = 'targeted' if targeted else 'untargeted'
+    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model +'_'+'attack'
+    with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
+        result = pickle.load(file)
     return result
 
 def checkpoint(results,model,pixel_count,method, targeted=False):
@@ -242,7 +244,7 @@ def checkpoint(results,model,pixel_count,method, targeted=False):
         
 def checkpoint_att(results,model,pixel_count,method, targeted=False):
     filename = 'targeted' if targeted else 'untargeted'
-    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model
+    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model +'_'+'attack'
     print('Saving to', filename)
     with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
         file.truncate(0)
