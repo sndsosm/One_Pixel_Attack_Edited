@@ -257,8 +257,9 @@ class PixelAttacker:
                         val_accuracy,_ = helper.evaluate_models([model],origs,labels)
                         net_stats,_ =helper.evaluate_models([model],imgs,labels)
                         new_stats.append([base_name,model.name, val_accuracy[0][1], pixel,s, net_stats[0][1]])
-      helper.checkpoint_att(results, base,df.pixels,df.method, targeted)
-      return pd.DataFrame(new_stats, columns=['attack_model', 'evaluation_model', 'accuracy', 'pixels', 'attack_success_rate','after_attack_accuracy'])
+      final=pd.DataFrame(new_stats, columns=['attack_model', 'evaluation_model', 'accuracy', 'pixels', 'attack_success_rate','after_attack_accuracy'])
+      helper.checkpoint_att(final, base_name,df.pixels,df.method, targeted)
+      return final
 
 if __name__ == '__main__':
     model_defs = {
