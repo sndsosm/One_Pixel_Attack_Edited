@@ -249,9 +249,9 @@ def heatmap(df):
     columns = ['model', 'pixels','method', 'image', 'true', 'predicted', 'success', 'cdiff', 'prior_probs', 'predicted_probs',
                'perturbation','perturbed']
     results_table = pd.DataFrame(df, columns=columns)
-    Y_pred = df.predicted
+    Y_pred = results_table.predicted
     y_pred = np.argmax(Y_pred, axis=1)
-    Y_test = df.true
+    Y_test =  results_table.true
     y_test=np.argmax(Y_test, axis=1)
     for ix in range(len(y_pred)):
         print(ix, confusion_matrix(np.argmax(y_test,axis=1),y_pred)[ix].sum())
