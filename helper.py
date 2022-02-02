@@ -242,7 +242,7 @@ def checkpoint(results,model,pixel_count,method, targeted=False):
         
 def checkpoint_att(results,model,pixel_count,method, targeted=False):
     filename = 'targeted' if targeted else 'untargeted'
-    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model.name
+    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model
     print('Saving to', filename)
     with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
         file.truncate(0)
