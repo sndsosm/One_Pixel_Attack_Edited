@@ -254,8 +254,8 @@ def heatmap(df):
     Y_test =  results_table.true
     y_test=np.array(Y_test)
     for ix in range(len(y_pred)):
-        print(ix, confusion_matrix(np.argmax(y_test,axis=1),y_pred)[ix].sum())
-    cm = confusion_matrix(np.argmax(y_test,axis=1),y_pred)
+        print(ix, confusion_matrix(np.argmax(y_test,axis=0),y_pred)[ix].sum())
+    cm = confusion_matrix(np.argmax(y_test,axis=0),y_pred)
     print(cm)
 
     df_cm = pd.DataFrame(cm, range(len(y_pred)),
