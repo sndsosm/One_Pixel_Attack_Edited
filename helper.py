@@ -220,31 +220,34 @@ def evaluate_models(models, x_test, y_test):
 
 import os.path
 
-def load_results(model,pixel_count,method, targeted=False):
+def load_results(model,pixel_count,method, targeted=False, old=False):
     filename = 'targeted' if targeted else 'untargeted'
-    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model
+    att= 'old' if old else 'new'
+    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model+'_'+att+'_'+'attack'
     with open('networks/results/' + filename + '_results.pkl', 'rb') as file:
         result = pickle.load(file)
     return result
 
 def load_predicted_results(model,pixel_count,method, targeted=False):
     filename = 'targeted' if targeted else 'untargeted'
-    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model +'_'+'attack'
+    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model +'_'+att+'_'+'compare'
     with open('networks/results/' + filename + '_results.pkl', 'rb') as file:
         result = pickle.load(file)
     return result
 
-def checkpoint(results,model,pixel_count,method, targeted=False):
+def checkpoint(results,model,pixel_count,method, targeted=False, old=False):
     filename = 'targeted' if targeted else 'untargeted'
-    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model.name
+    att= 'old' if old else 'new'
+    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model.name +'_'+att+'_'+'attack'
     print('Saving to', filename)
     with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
         file.truncate(0)
         pickle.dump(results, file)
         
-def checkpoint_att(results,model,pixel_count,method, targeted=False):
+def checkpoint_att(results,model,pixel_count,method, targeted=False, old=False):
     filename = 'targeted' if targeted else 'untargeted'
-    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model +'_'+'attack'
+    att= 'old' if old else 'new'
+    filename=filename + '_' + str(method) +'_' + str(pixel_count) + '_'+ model +'_'+att+'_'+'compare'
     print('Saving to', filename)
     with open('networks/results/' + filename + '_results.pkl', 'wb') as file:
         file.truncate(0)
