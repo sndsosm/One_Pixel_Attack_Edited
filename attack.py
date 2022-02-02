@@ -202,7 +202,7 @@ class PixelAttacker:
                         model_results.append(result)
 
             results += model_results
-            helper.checkpoint(results,model,pixel_count,method, targeted, 'old')
+            helper.checkpoint(results,model,pixel_count,method, targeted,True)
             helper.heatmap(results)
         return results
         
@@ -231,7 +231,7 @@ class PixelAttacker:
 
           results += model_results
           
-          helper.checkpoint(results, model,pixel_count,method, targeted, 'new')
+          helper.checkpoint(results, model,pixel_count,method, targeted, False)
           helper.heatmap(results)
       return results
 
