@@ -235,7 +235,7 @@ class PixelAttacker:
           helper.heatmap(results)
       return results
 
-    def predict_attack(self, base, models, df):
+    def predict_attack(self, base, models, df,targeted=False):
       new_stats=[]
       base_name=base[0].name
       df2=helper.attack_stats(df, base, self.network_stats)
@@ -257,7 +257,7 @@ class PixelAttacker:
                         val_accuracy,_ = helper.evaluate_models([model],origs,labels)
                         net_stats,_ =helper.evaluate_models([model],imgs,labels)
                         new_stats.append([base_name,model.name, val_accuracy[0][1], pixel,s, net_stats[0][1]])
-              
+        helper.checkpoint_att(results, base,df.pixels,df.method, targeted)
       return pd.DataFrame(new_stats, columns=['attack_model', 'evaluation_model', 'accuracy', 'pixels', 'attack_success_rate','after_attack_accuracy'])
 
 if __name__ == '__main__':
@@ -324,14 +324,7 @@ if __name__ == '__main__':
     results_table = pd.DataFrame(results, columns=columns)
 
     print(results_table[['model', 'pixels', 'method', 'image', 'true', 'predicted', 'success']])
-
-    print('Saving to', args.save)
-    with open(args.save, 'wb') as file:
-        pickle.dump(results, file)
     
-    attack_prediction=attacker.predict_attack(base,models,results_table)
+    attack_prediction=attacker.predict_attack(base,models,results_table,args.targeted)
     print(attack_prediction)
     
-    print('Saving to', args.save_attack)
-    with open(args.save_attack, 'wb') as file:
-        pickle.dump(attack_prediction, file)
