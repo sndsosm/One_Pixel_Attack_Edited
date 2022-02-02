@@ -202,7 +202,7 @@ class PixelAttacker:
                         model_results.append(result)
 
             results += model_results
-            helper.checkpoint(results,model,pixel_count,method, targeted)
+            helper.checkpoint(results,model,pixel_count,method, targeted, 'old')
             helper.heatmap(results)
         return results
         
@@ -231,11 +231,11 @@ class PixelAttacker:
 
           results += model_results
           
-          helper.checkpoint(results, model,pixel_count,method, targeted)
+          helper.checkpoint(results, model,pixel_count,method, targeted, 'new')
           helper.heatmap(results)
       return results
 
-    def predict_attack(self, base, models, df,targeted=False):
+    def predict_attack(self, base, models, df,targeted=False, old=False):
       new_stats=[]
       base_name=base[0].name
       df2=helper.attack_stats(df, base, self.network_stats)
@@ -258,7 +258,7 @@ class PixelAttacker:
                         net_stats,_ =helper.evaluate_models([model],imgs,labels)
                         new_stats.append([base_name,model.name, val_accuracy[0][1], pixel,s, net_stats[0][1]])
       final=pd.DataFrame(new_stats, columns=['attack_model', 'evaluation_model', 'accuracy', 'pixels', 'attack_success_rate','after_attack_accuracy'])
-      helper.checkpoint_att(final, base_name,df.pixels[0],df.method[0], targeted)
+      helper.checkpoint_att(final, base_name,df.pixels[0],df.method[0], targeted, old)
       return final
 
 if __name__ == '__main__':
@@ -326,6 +326,6 @@ if __name__ == '__main__':
 
     print(results_table[['model', 'pixels', 'method', 'image', 'true', 'predicted', 'success']])
     
-    attack_prediction=attacker.predict_attack(base,models,results_table,args.targeted)
+    attack_prediction=attacker.predict_attack(base,models,results_table,args.targeted, args.old)
     print(attack_prediction)
     
