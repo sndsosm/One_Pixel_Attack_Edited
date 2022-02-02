@@ -249,20 +249,9 @@ def heatmap(df):
     columns = ['model', 'pixels','method', 'image', 'true', 'predicted', 'success', 'cdiff', 'prior_probs', 'predicted_probs',
                'perturbation','perturbed']
     results_table = pd.DataFrame(df, columns=columns)
-    Y_pred = results_table.predicted
-    y_pred = np.array(Y_pred)
-    Y_test =  results_table.true
-    y_test=np.array(Y_test)
-    for ix in range(len(y_pred)):
-        print(ix, confusion_matrix(np.argmax(y_test,axis=0),y_pred)[ix].sum())
-    cm = confusion_matrix(np.argmax(y_test,axis=0),y_pred)
-    print(cm)
+    confusion_matrix = pd.crosstab(results_table.true, results_table.predicted, rownames=['Actual'], colnames=['Predicted'])
 
-    df_cm = pd.DataFrame(cm, range(len(y_pred)),
-                       range(len(y_pred)))
-    plt.figure(figsize = (10,7))
-    sn.set(font_scale=1.4)#for label size
-    sn.heatmap(df_cm, annot=True,annot_kws={"size": 12})# font size
+    sn.heatmap(confusion_matrix, annot=True)
     plt.show()
                     
 def download_from_url(url, dst):
