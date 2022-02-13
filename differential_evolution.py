@@ -563,7 +563,7 @@ class DifferentialEvolutionSolver(object):
             self._calculate_population_energies()
 
         # do the optimisation.
-        for nit in range(1, self.maxiter + 1):
+        for nit in xrange(1, self.maxiter + 1):
             # evolve the population by a generation
             try:
                 next(self)
