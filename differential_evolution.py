@@ -15,7 +15,7 @@ import numpy as np
 from scipy.optimize import OptimizeResult, minimize
 from scipy.optimize.optimize import _status_message
 from scipy._lib._util import check_random_state
-from scipy._lib.six import string_types
+from dipy.utils.six import xrange,string_types
 import warnings
 
 
