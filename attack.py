@@ -13,9 +13,9 @@ from networks.resnet import ResNet
 
 import os
 # Helper functions
-from differential_evolution import differential_evolution
+
 import helper
-from scipy.optimize import dual_annealing, basinhopping
+from scipy.optimize import dual_annealing, basinhopping, differential_evolution
 import random
 from random import randint 
 
