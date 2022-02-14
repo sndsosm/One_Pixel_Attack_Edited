@@ -99,17 +99,17 @@ class PixelAttacker:
         def callback_fn_BH(x, f,accept):
             return self.attack_success(x, self.x_test[img_id], target_class, model, targeted_attack, verbose)
         
-        if (method=='DE'):
+        if (method==1):
           alg='DE'
           bounds = [(0, dim_x), (0, dim_y), (0, 256), (0, 256), (0, 256)] * pixel_count
           # Population multiplier, in terms of the size of the perturbation vector x
           popmul = max(1, popsize // len(bounds))
           attack_result = differential_evolution(predict_fn, bounds, maxiter=maxiter, popsize=popmul,recombination=1,callback=callback_fn, atol=-1, polish=False)
-        elif (method=='DA'):
+        elif (method==2):
           alg='DA'
           bounds = bounds = [(0, dim_x), (0, dim_y), (0, 256), (0, 256), (0, 256)] * pixel_count
           attack_result =dual_annealing(predict_fn, bounds, maxiter=maxiter, intital_temp=temperature, callback=callback_fn_DA)
-        elif (method=='BH'):
+        elif (method==3):
           alg='BH'
           bounds = [(0, dim_x), (0, dim_y), (0, 255), (0, 255), (0, 255)] * pixel_count
           minimizer_kwargs = { "method": "L-BFGS-B","bounds":bounds }
@@ -147,17 +147,20 @@ class PixelAttacker:
           return self.attack_successes(x, self.x_test[img_id], target_class, 
                                 model, targeted_attack, verbose)
                                 
-      if (method=='DE'):
+      if (method==1):
+        
         alg='DE'
         bounds = [(0,dim_x), (0,dim_y),(0,256), (0,dim_x), (0,dim_y),(0,256),(0,dim_x), (0,dim_y),(0,256)] * pixel_count
         # Population multiplier, in terms of the size of the perturbation vector x
         popmul = max(1, popsize // len(bounds))
         attack_result = differential_evolution(predict_fn, bounds, maxiter=maxiter, popsize=popmul,recombination=1, atol=-1, polish=False)
-      elif (method=='DA'):
+      elif (method==2):
+          
           alg='DA'
           bounds = [(0,dim_x), (0,dim_y),(0,256), (0,dim_x), (0,dim_y),(0,256),(0,dim_x), (0,dim_y),(0,256)] * pixel_count
           attack_result =dual_annealing(predict_fn, bounds, maxiter=maxiter, initial_temp=temperature)
-      elif (method=='BH'):
+      elif (method==3):
+        
         alg='BH'
         bounds = [(0,dim_x), (0,dim_y),(0,255), (0,dim_x), (0,dim_y),(0,255),(0,dim_x), (0,dim_y),(0,255)] * pixel_count
         minimizer_kwargs = { "method": "L-BFGS-B","bounds":bounds }
@@ -272,7 +275,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Attack models on Cifar10')
     parser.add_argument('--model', nargs='+', choices=model_defs.keys(), default='resnet',
                         help='Specify one model by name to evaluate.')
-    parser.add_argument('--method',  type=str,default='DE',
+    parser.add_argument('--method',  type=int,default=1,
                         help='Specify optimization algorithm.')
     parser.add_argument('--pixels', nargs='+', default=(1), type=int,
                         help='The number of pixels that can be perturbed.')
