@@ -4,6 +4,6 @@ tensorflow-gpu
 pandas
 numpy
 matplotlib
-scipy
+scipy==1.4
 tqdm
 requests
