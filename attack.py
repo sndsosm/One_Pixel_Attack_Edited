@@ -15,7 +15,8 @@ import os
 # Helper functions
 
 import helper
-from scipy.optimize import dual_annealing, basinhopping, differential_evolution
+from differential_evolution import differential_evolution
+from scipy.optimize import dual_annealing, basinhopping
 import random
 from random import randint 
 
